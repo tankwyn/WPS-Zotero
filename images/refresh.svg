@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 800 800"
+   version="1.1"
+   id="svg14"
+   sodipodi:docname="refresh.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   width="800"
+   height="800"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview16"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="0.22786458"
+     inkscape:cx="-853.57715"
+     inkscape:cy="173.34857"
+     inkscape:window-width="2160"
+     inkscape:window-height="1377"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg14"
+     width="800px" />
+  <defs
+     id="defs4">
+    <style
+       type="text/css"
+       id="style2">.skinbaseDark,.skinbaseLight,.skinthemeDark{fill-rule:evenodd;}.skinbaseDark,.skinbaseLight{opacity:0.8;}.skinbaseLight{fill:#838383;}.skinthemeDark{fill:#5789d9;}</style>
+  </defs>
+  <title
+     id="title6">编辑文字</title>
+  <path
+     class="skinbaseDark"
+     d="M 670.94897,717.5965 H 137.6222 A 56.139659,56.139659 0 0 1 81.482545,661.45684 V 128.13008 A 56.139659,56.139659 0 0 1 137.6222,71.990425 h 533.32677 a 56.139659,56.139659 0 0 1 56.13966,56.139655 V 661.45684 A 56.139659,56.139659 0 0 1 670.94897,717.5965 Z M 699.0188,128.13008 A 28.069829,28.069829 0 0 0 670.94897,100.06025 H 137.6222 a 28.069829,28.069829 0 0 0 -28.06983,28.06983 v 533.32676 a 28.069829,28.069829 0 0 0 28.06983,28.06983 h 533.32677 a 28.069829,28.069829 0 0 0 28.06983,-28.06983 z"
+     id="path8"
+     style="fill:#800000;stroke-width:28.0698" />
+  <path
+     class="skinbaseLight"
+     d="m 684.98388,408.82837 h -84.20949 a 14.034915,14.034915 0 1 1 0,-28.06983 h 84.20949 a 14.034915,14.034915 0 1 1 0,28.06983 z m -280.69829,280.6983 a 14.036318,14.036318 0 0 1 -14.03492,-14.03492 v -84.20949 a 14.034915,14.034915 0 1 1 28.06983,0 v 84.20949 a 14.036318,14.036318 0 0 1 -14.03491,14.03492 z m 0,-533.32676 A 14.036318,14.036318 0 0 1 390.25067,142.165 v -28.06983 a 14.034915,14.034915 0 1 1 28.06983,0 V 142.165 a 14.036318,14.036318 0 0 1 -14.03491,14.03491 z M 207.79678,408.82837 h -84.20949 a 14.034915,14.034915 0 1 1 0,-28.06983 h 84.20949 a 14.034915,14.034915 0 1 1 0,28.06983 z"
+     id="path10"
+     style="stroke-width:28.0698" />
+  <path
+     id="path7065"
+     style="fill:#0066ff;stroke:none;stroke-width:28.0698px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 314.57874,412.23279 25.47436,-13.44954 -78.44028,-37.49776 -13.62184,85.37708 23.4871,-11.44134 M 551.09212,306.16128 a 157.53461,154.20891 61.927471 0 0 -210.24965,-66.50122 157.53461,154.20891 61.927471 0 0 -15.90213,9.91023 l 23.81295,44.6492 a 106.79954,104.5449 61.927471 0 1 14.56054,-9.62966 106.79954,104.5449 61.927471 0 1 142.53247,45.08126 106.79954,104.5449 61.927471 0 1 -41.99176,143.43222 106.79954,104.5449 61.927471 0 1 -142.50665,-45.03287 106.79954,104.5449 61.927471 0 1 -6.76925,-15.83759 l -43.10123,22.98737 a 157.53461,154.20891 61.927471 0 0 7.51096,16.06332 157.53461,154.20891 61.927471 0 0 210.14965,66.43028 157.53461,154.20891 61.927471 0 0 61.9541,-211.55254 z" />
+  <metadata
+     id="metadata825">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>编辑文字</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

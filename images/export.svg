@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 800 800"
+   version="1.1"
+   id="svg913"
+   sodipodi:docname="export.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   width="800"
+   height="800"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview915"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="0.32224919"
+     inkscape:cx="-293.25132"
+     inkscape:cy="209.46523"
+     inkscape:window-width="2160"
+     inkscape:window-height="1377"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg913"
+     width="800px" />
+  <defs
+     id="defs905">
+    <style
+       type="text/css"
+       id="style903">.skinbaseDark,.skinthemeDark{fill-rule:evenodd;}.skinbaseDark{opacity:0.8;}.skinthemeDark{fill:#5789d9;}</style>
+  </defs>
+  <title
+     id="title907">艺术字大小</title>
+  <path
+     class="skinthemeDark"
+     d="m 743.72016,665.95376 v 30.1301 a 30.130095,30.130095 0 0 1 -30.1301,30.13009 h -30.13009 a 30.130095,30.130095 0 0 1 -30.1301,-30.13009 H 141.11825 a 30.130095,30.130095 0 0 1 -30.13009,30.13009 H 80.858061 A 30.130095,30.130095 0 0 1 50.727966,696.08386 v -30.1301 A 30.130095,30.130095 0 0 1 80.858061,635.82367 V 153.74214 A 30.130095,30.130095 0 0 1 50.727966,123.61205 V 93.481949 A 30.130095,30.130095 0 0 1 80.858061,63.351854 h 30.130099 a 30.130095,30.130095 0 0 1 30.13009,30.130095 h 512.21162 a 30.130095,30.130095 0 0 1 30.1301,-30.130095 h 30.13009 a 30.130095,30.130095 0 0 1 30.1301,30.130095 v 30.130101 a 30.130095,30.130095 0 0 1 -30.1301,30.13009 v 482.08153 a 30.130095,30.130095 0 0 1 30.1301,30.13009 z M 80.858061,684.03181 a 12.052038,12.052038 0 0 0 12.052038,12.05205 h 6.026019 A 12.052038,12.052038 0 0 0 110.98816,684.03181 V 678.0058 A 12.052038,12.052038 0 0 0 98.936118,665.95376 H 92.910099 A 12.052038,12.052038 0 0 0 80.858061,678.0058 Z M 110.98816,105.53399 A 12.052038,12.052038 0 0 0 98.936118,93.481949 H 92.910099 A 12.052038,12.052038 0 0 0 80.858061,105.53399 V 111.56 a 12.052038,12.052038 0 0 0 12.052038,12.05205 h 6.026019 A 12.052038,12.052038 0 0 0 110.98816,111.56 Z m 542.34171,18.07806 H 141.11825 a 30.130095,30.130095 0 0 1 -30.13009,30.13009 v 482.08153 a 30.130095,30.130095 0 0 1 30.13009,30.13009 h 512.21162 a 30.130095,30.130095 0 0 1 30.1301,-30.13009 V 153.74214 a 30.130095,30.130095 0 0 1 -30.1301,-30.13009 z m 60.26019,-18.07806 A 12.052038,12.052038 0 0 0 701.53803,93.481949 h -6.02602 A 12.052038,12.052038 0 0 0 683.45997,105.53399 V 111.56 a 12.052038,12.052038 0 0 0 12.05204,12.05205 h 6.02602 A 12.052038,12.052038 0 0 0 713.59006,111.56 Z m -12.05203,560.41977 h -6.02602 a 12.052038,12.052038 0 0 0 -12.05204,12.05204 v 6.02601 a 12.052038,12.052038 0 0 0 12.05204,12.05205 h 6.02602 a 12.052038,12.052038 0 0 0 12.05203,-12.05205 v -6.02601 a 12.052038,12.052038 0 0 0 -12.05203,-12.05204 z"
+     id="path911"
+     style="fill:#800000;stroke-width:30.1301" />
+  <metadata
+     id="metadata825">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>艺术字大小</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <polyline
+     points="48 24 32 8 16 24"
+     id="polyline2"
+     transform="matrix(7.6546763,0,0,7.6546763,147.29193,153.82554)"
+     style="fill:none;stroke:#0066ff;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none" />
+  <line
+     x1="575.9538"
+     y1="582.48743"
+     x2="208.52934"
+     y2="582.48743"
+     id="line4"
+     style="stroke:#0066ff;stroke-width:30.6187;stroke-miterlimit:4;stroke-dasharray:none" />
+  <line
+     x1="392.24155"
+     y1="521.25"
+     x2="392.24155"
+     y2="215.06297"
+     id="line6"
+     style="stroke:#0066ff;stroke-width:30.6187;stroke-miterlimit:4;stroke-dasharray:none" />
+</svg>
