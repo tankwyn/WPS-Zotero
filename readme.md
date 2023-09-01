@@ -26,6 +26,12 @@ The addon will store data to documents in a way similar as MS Word. The only dif
 
 If there's something wrong occured during a transaction, the Zotero server will then be unusable, you will then be advised to restart Zotero. For other cases, restart WPS Writer and Zotero to see if the problem persists. If so, delete the pipe and pid file located in ~/.wps-zotero.
 
+## Windows support
+
+Windows support should be out of box if there's no host permission restrictions on Zotero's connector server. To make this work on Windows would require another workaround approach other than `mkfifo`, a http proxy maybe. Anyway, it's planned and will be implemented in the future.
+
+暂时只能在Linux用，因为用了FIFO，后期将会支持Windows。动手能力强的朋友可以开个反CORS代理，改zclient.js里的postRequest函数，把URL用代理地址代替，用原生方法发起http请求。
+
 ## Citation formatting
 
 The client only supports a limited set of formatting tags (\<p\>, \<br\>, \<b\>, \<i\> ...), which should cover all using cases. However, if you found any formating problems, please raise an issue, I will add it.
