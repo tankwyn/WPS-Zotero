@@ -2,6 +2,8 @@
 
 A WPS Writer addon for integrating Zotero on Linux. WPS is an office suite with excellent compatiblity to MS Word. For scientific workers to migrate from Windows to GNU/Linux, a good Word processor with citation management support has always been a great obstacle. With this addon, you can add/edit citations in documents created with MS Word and send your documents created with WPS Writer to others to edit in MS Word. By design, it should provide a seamless experience for people who work in an environment where everyone else use Windows and MS Word. If you encountered any trouble, please open an issue, I will fix it ASAP.
 
+这个插件可以让你在Linux下写论文，再发给别人在Windows/MS Word下改，两边插入的引用可以共通（需要选择将引用存储为域），喜欢的朋友点个星星，帮忙散播一下消息，帮助更多科研狗逃脱Windows/MS Office！
+
 ## Installation
 
 Install WPS and Zotero first.
@@ -9,6 +11,8 @@ Install WPS and Zotero first.
 Download the repo, go into it, and issue `./install.sh`. The script will try to install python package `requests` for you if you don't already have it. Should that fail, you should install it manually and you may have to change the pip source.
 
 To uninstall, run `./uninstall.sh`.
+
+直接下载源码或release包解压，cd进去执行install.sh即可，这个插件需要python的requests包，如果自动安装不行就自己手动安装，有些网络环境可能要换个pip源，比如ustc的源。卸载就运行uninstal.sh即可。
 
 ## How does it work
 
