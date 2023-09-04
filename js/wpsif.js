@@ -818,7 +818,7 @@ function zc_replaceFieldRichText(field, text, bibStyle) {
             const range_ = field.Result;
             range_.Collapse(wps.Enum.wdCollapseEnd);
             // step out of the field range
-            raneg_.MoveStart(wps.Enum.wdCharacter, 1);
+            range_.MoveStart(wps.Enum.wdCharacter, 1);
             range_.InsertParagraph();
         }
         if (!bibStyle_) {

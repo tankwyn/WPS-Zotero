@@ -69,6 +69,8 @@ else
   sed -i "$[n0+1]i\ \ <jsplugin name=\"wps-zotero\" type=\"wps\" url=\"http://127.0.0.1:3889/\" version=\"${version}\"/>" ${jsplugins}
 fi
 
+# TODO: add record to publish.xml
+
 # Move 
 cp -r . ${addon_path}/${app_name}
 

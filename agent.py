@@ -4,7 +4,6 @@ import json
 import requests
 import os
 import logging
-import fcntl
 import atexit
 import sys
 

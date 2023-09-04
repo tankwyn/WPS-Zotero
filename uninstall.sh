@@ -11,8 +11,8 @@ if [ -f ${script_path}/wps-zotero-pipe ]; then
   exit
 fi
 
-rm -r ${script_path} 2>/dev/null
-rm -r ${addon_path}/${app_name} 2>/dev/null
+rm -rf ${script_path} 2>/dev/null
+rm -rf ${addon_path}/${app_name} 2>/dev/null
 if [ -f ${jsplugins} ]; then
   n=$(grep -n "wps-zotero" ${jsplugins} | cut -d ':' -f 1)
   sed -i ${n}d ${jsplugins}
