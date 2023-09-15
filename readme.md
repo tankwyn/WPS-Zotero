@@ -1,8 +1,8 @@
 # WPS-Zotero
 
-A WPS Writer add-on for integrating with Zotero. It supports both GNU/Linux and Windows now. WPS is an office suite with excellent compatibility to MS Word. For scientific workers to migrate from Windows to GNU/Linux, lacking a good Word processor with citation management support has always been a great obstacle. With this add-on, you can add/edit citations in documents created with MS Word or send your documents created with WPS Writer to others to edit in MS Word. It should provide a seamless experience for people who work in an environment where everyone else use Windows and MS Word. If you encountered any problem, please open an issue, I will fix it ASAP.
+A WPS Writer add-on for integrating with Zotero. **It supports both GNU/Linux and Windows now**. WPS is an office suite with excellent compatibility to MS Word. For scientific workers to migrate from Windows to GNU/Linux, lacking a good Word processor with citation management support has always been a great obstacle. With this add-on, you can add/edit citations in documents created with MS Word or send your documents created with WPS Writer to others to edit in MS Word. It should provide a seamless experience for people who work in an environment where everyone else use Windows and MS Word. If you encountered any problem, please open an issue, I will fix it ASAP.
 
-这个插件可以让你在Linux下写论文，再发给别人在Windows/MS Word下改，两边插入的引用可以共通（需要选择将引用存储为域），喜欢的朋友点个星星，帮忙散播一下消息，帮助更多科研狗逃脱Windows/MS Office！
+这个插件可以让你在Linux下写论文，再发给别人在Windows/MS Word下改，两边插入的引用可以共通（需要选择将引用存储为域）。**现在也支持Windows了哦**。喜欢的朋友点个星星，帮忙散播一下消息，帮助更多科研狗逃脱Windows/MS Office！
 
 ## Installation
 
@@ -12,7 +12,9 @@ Download the repository, unzip and go into it, and run `./install.py` (`python.e
 
 To uninstall, run `./install.py -u` (`python.exe install.py -u` on Windows).
 
-直接下载源码包解压，cd 进去执行 install.py 即可，这个插件需要 Python3，Linux 一般自带了，Windows 需要自己下载安装。
+(On Windows, you can open a terminal by hitting the start button and type `cmd`, then use `cd` command to go to the unzipped directory, `cd D:\Downloads\WPS-Zotero`, e.g.)
+
+直接下载源码包解压，cd 进去执行 install.py 即可，这个插件需要 Python3，Linux 一般自带了，Windows 需要自己下载安装。Windows下点击开始按键搜索cmd并打开控制台，然后cd到解压的插件目录下面执行安装，如：cd D:\Downloads\WPS-Zotero，具体路径可以从资源管理器地址栏复制。
 
 ## How does it work
 
