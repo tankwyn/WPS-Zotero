@@ -14,7 +14,7 @@ To uninstall, run `./install.py -u` (`python.exe install.py -u` on Windows).
 
 (On Windows, you can open a terminal by hitting the start button and type `cmd`, then use `cd` command to go to the unzipped directory, `cd D:\Downloads\WPS-Zotero`, e.g.)
 
-直接下载源码包解压，cd 进去执行 install.py 即可，这个插件需要 Python3，Linux 一般自带了，Windows 需要自己下载安装。Windows下点击开始按键搜索cmd并打开控制台，然后cd到解压的插件目录下面执行安装，如：cd D:\Downloads\WPS-Zotero，具体路径可以从资源管理器地址栏复制。
+直接下载源码包解压，cd 进去执行 install.py 即可，这个插件需要 Python3，Linux 一般自带了，Windows 需要自己下载安装。Windows下点击开始按键搜索cmd并打开控制台，然后cd到解压的插件目录下面执行安装，如：cd D:\Downloads\WPS-Zotero，具体路径可以从资源管理器地址栏复制。实在不会安装的看[**详细教程**](https://www.cnblogs.com/tkwblog/articles/17705935.html)。
 
 ## How does it work
 
