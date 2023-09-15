@@ -1,124 +1,57 @@
 /* 
-** A client to connect to Zotero using the Zotero HTTP citing protocol.
+** A client for the Zotero HTTP integration server.
 ** (https://www.zotero.org/support/dev/client_coding/http_integration_protocol)
 */
 
 /**
- * Create the client for sending commands to Zotero.
- * @param documentId The document ID to be associated with the client.
- * @param processor Word processor interface providing basic editing functionalities.
+ * Create a client to communicate with Zotero.
+ * @param documentId The document ID of the document to be binded with the client.
+ * @param processor Word processor interface.
  * @returns client object.
 **/
 function zc_createClient(documentId, processor) {
-    const commandUrl = 'http://127.0.0.1:23119/connector/document/execCommand';
-    const respondUrl = 'http://127.0.0.1:23119/connector/document/respond';
-
-    // Error code stored as status in http response
-    const requestErrors = {
-        BASELINE: 1000,
-        NETWORK_ERROR: 1000,
-        PIPE_NOT_EXIST: 1001,
-        PIPE_IO_ERROR: 1002
-    };
+    // The proxy server listens on 21931 and forwards requests to 23119
+    const commandUrl = 'http://127.0.0.1:21931/connector/document/execCommand';
+    const respondUrl = 'http://127.0.0.1:21931/connector/document/respond';
 
     function requestStatusHint(status) {
-        if (status >= requestErrors.BASELINE) {
-            switch (status) {
-                case requestErrors.NETWORK_ERROR:
-                    zc_alert('Unable to talk to Zotero, is it running?');
-                    break;
-                case requestErrors.PIPE_NOT_EXIST:
-                    zc_alert('The request agent is not running!');
-                    break;
-                case requestErrors.PIPE_IO_ERROR:
-                    zc_alert('Cannot communicate with the request agent!');
-                    break;
-                default:
-                    break;
+        if (status >= 300) {
+            if (status < 400) {
+                zc_alert(`Received unexpected redirection message ${status}!`);
             }
-        }
-        else {
-            if (status >= 300) {
-                if (status < 400) {
-                    zc_alert(`Received unexpected redirection message ${status}!`);
-                }
-                else if (status < 500) {
-                    zc_alert(`Client error ${status}`);
+            else if (status < 500) {
+                zc_alert(`Client error ${status}`);
+            }
+            else {
+                if (status === 503) {
+                    zc_alert('Zotero is serving another program, restart it if this is not the case.');
                 }
                 else {
-                    if (status === 503) {
-                        zc_alert('Zotero is serving another program, restart it if this is not the case.');
-                    }
-                    else {
-                        zc_alert(`Server error ${status}`);
-                    }
+                    zc_alert(`Server error ${status}`);
                 }
             }
         }
-    }
-
-    /**
-     * Make post requests through an agent using named pipe.
-    **/
-    function postRequest(url, payload) {
-        assert(url);
-        const pipe = `${HOME}/.wps-zotero/wps-zotero-pipe`;
-
-        console.debug('>>>> request:', payload);
-
-        const data = {
-            status: requestErrors.UNDEFINED,
-            payload: null
-        };
-        if (!Application.FileSystem.Exists(pipe)) {
-            console.error(`PIPE error: ${pipe} not existing`);
-            data.status = requestErrors.PIPE_NOT_EXIST;
-        }
-        else {
-            let resp = null;
-            try {
-                // NOTE: The `FileSystem` api reads/writes with utf-8.
-                Application.FileSystem.AppendFile(pipe, `${url}\n${JSON.stringify(payload)}`);
-                resp = Application.FileSystem.ReadFile(pipe);
-            } catch (error) {
-                console.error(`PIPE error: ${error}`);
-                if (resp === null) Application.FileSystem.ReadFile(pipe);
-                data.status = requestErrors.PIPE_IO_ERROR;
-            }
-            if (resp) {
-                const respLines = resp.split('\n');
-                data.status = Number(respLines[0]);
-                data.payload = JSON.parse(respLines[1]);
-            }
-        }
-
-        console.debug('<<<<< response: ', data);
-        return data;
     }
 
     function execCommand(command) {
-        return postRequest(commandUrl, {
+        return postRequestXHR(commandUrl, {
             "command": command,
             "docId": documentId,
         })
     }
 
     function respond(payload) {
-        return postRequest(respondUrl, payload);
+        return postRequestXHR(respondUrl, payload);
     }
-
-    // var insertingNote;
-    // var insertNoteIndex;
 
     /**
      * Send client commands to Zotero and make changes to documents.
     **/
     function transact(command) {
-        // TODO: If exception occurred and the command is not fully completed, the server will be in an unsable state. Is there any way to avoid this?
+        // TODO: If exception occurred and the command is not fully completed,
+        // the server will be in an unsable state. Is there any way to avoid this?
 
-        // init transaction
-        // insertingNote = false;
-        // insertNoteIndex = 1;
+        // Init transaction
         let state = true;
         processor.init(documentId);
 
@@ -144,15 +77,6 @@ function zc_createClient(documentId, processor) {
             state = false;
             console.error('Error occurred while responding:', error);
             zc_alert('Internal error occurred while responding to Zotero, you will have to restart Zotero. Please click dev tool, navigate to console and report the problem.');
-            // // Keep responding false to make the server end this conversation.
-            // // Only when `postRequest` is still functioning
-            // if (req.status < 300) {
-            //     console.warn('Now trying to shutdown connection...');
-            //     for (let i = 0; i < 30; i++) {
-            //         req = postRequest(respondUrl, false);
-            //         if (req.payload && req.payload.command === 'complete') break;
-            //     }
-            // }
         }
 
         processor.reset(documentId);
@@ -377,10 +301,5 @@ function zc_createClient(documentId, processor) {
         import: () => { processor.importDocument(documentId); }
     };
 }
-
-// if (typeof module !== 'undefined' && module.exports) {
-//     let c = zc_create('aslkdfjlasfjlsafjslaweiourr', virtualProcessor);
-//     c.command('addEditCitation');
-// }
 
     

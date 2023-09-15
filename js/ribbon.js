@@ -1,113 +1,90 @@
 // NOTE: Shouldn't be needing this if using the latest version of WPS
-var WPS_Enum = {
+const WPS_Enum = {
     msoCTPDockPositionLeft: 0,
     msoCTPDockPositionRight: 2,
     msoPropertyTypeString: 4,
     wdCollapseStart: 1,
     wdCollapseEnd: 0,
     wdCharacter: 1,
-}
+};
 
-const HOME = wps.Env.GetHomePath();
-
-function zc_alert(msg) {
-    alert(`WPS-Zotero: ${msg}`);
-}
+// Storing global variables
+const GLOBAL_MAP = {};
 
 /**
- * Callback for plugin loading
- */
+ * Callback for plugin loading.
+**/
 function OnAddinLoad(ribbonUI) {
     if (typeof (wps.Enum) !== "object") {
         wps.Enum = WPS_Enum;
-        alert('You are using an old version of WPS, this plugin might not work properly!');
+        zc_alert('You are using an old version of WPS, this plugin might not work properly!');
     }
     if (typeof (wps.ribbonUI) !== "object"){
         wps.ribbonUI = ribbonUI;
     }
 
-    // Application.ApiEvent.AddApiEventListener("DocumentAfterClose", (doc) => {
-    //     zc_registryRemove(doc);
-    // });
+    GLOBAL_MAP.isWin = Boolean(wps.Env.GetProgramDataPath());
+    GLOBAL_MAP.osSep = GLOBAL_MAP.isWin ? '\\' : '/';
+    GLOBAL_MAP.instDir = GLOBAL_MAP.isWin ?
+        wps.Env.GetAppDataPath().replaceAll('/', '\\') + `\\kingsoft\\wps\\jsaddons\\wps-zotero_${VERSION}`:
+        wps.Env.GetHomePath() + `/.local/share/Kingsoft/wps/jsaddons/wps-zotero_${VERSION}`;
+    GLOBAL_MAP.proxyPath = GLOBAL_MAP.instDir + GLOBAL_MAP.osSep + 'proxy.py';
 
-    // Start request agent
-    wps.OAAssist.ShellExecute(HOME + '/.wps-zotero/agent.py');
+    // Start http proxy server
+    if (GLOBAL_MAP.isWin) {
+        wps.OAAssist.ShellExecute('pythonw.exe', GLOBAL_MAP.proxyPath);
+    }
+    else {
+        wps.OAAssist.ShellExecute('python3', GLOBAL_MAP.proxyPath);
+    }
     
-    // Exit the request agent when the application quits.
+    // Exit the proxy server when the application quits.
     Application.ApiEvent.AddApiEventListener("ApplicationQuit", () => {
-        wps.OAAssist.ShellExecute(HOME + '/.wps-zotero/agent.py', 'kill');
+        // NOTE: This event is never received on Windows, so the proxy server can't be stopped and there's nothing I can do.
+        postRequestXHR('http://127.0.0.1:21931/stopproxy', null);
     });
     
     return true
 }
 
+/**
+ * Callback for button clicking events.
+**/
 function OnAction(control) {
     const eleId = control.Id
-    let client = null;
     switch (eleId) {
         case "btnAddEditCitation":
-            client = zc_bind();
-            client.command('addEditCitation');
             // IMPORTANT: Release references on the document objects!!!
+            zc_bind().command('addEditCitation');
             zc_clearRegistry();
-            // Assert(Object.keys(zc_registry.doc_client).length === 0);
             break;
         case "btnAddEditBib":
-            client = zc_bind();
-            client.command('addEditBibliography');
+            zc_bind().command('addEditBibliography');
             zc_clearRegistry();
             break;
         case "btnRefresh":
-            client = zc_bind();
-            client.import();
-            zc_clearRegistry();
-            // Must open a new client, since import will not register fields to client.
-            client = zc_bind();
-            client.command('refresh');
+            zc_bind().import();
+            // Must open a new client, since import will not register fields to zc_bind().
+            zc_bind().command('refresh');
             zc_clearRegistry();
             break;
         case "btnPref":
-            client = zc_bind();
-            client.command('setDocPrefs');
+            zc_bind().command('setDocPrefs');
             zc_clearRegistry();
             break;
         case "btnExport":
-            client = zc_bind(zc_getDocumentInDocuments());
-             if (confirm('Confirm to convert this document into a style to let other processors import from? You may want to make a backup first.')) client.export();
-            zc_clearRegistry();
+            if (confirm('Convert this document to a format for other word processors to import from? You may want to make a backup first.'))
+            {
+               zc_bind().export();
+            }
             break;
         case "btnUnlink":
-            client = zc_bind(zc_getDocumentInDocuments());
-            client.command('removeCodes');
+            zc_bind().command('removeCodes');
             zc_clearRegistry();
             break;
         case "btnAddNote":
-            client = zc_bind(zc_getDocumentInDocuments());
-            client.command('addNote');
+            zc_bind().command('addNote');
             zc_clearRegistry();
-            break;
-        case "btnTest":
-            // const commandUrl = 'http://127.0.0.1:23119/connector/document/execCommand';
-            // const respondUrl = 'http://127.0.0.1:23119/connector/document/respond';
-            // const req = (async () => {
-            //     return postRequestNative(commandUrl, {
-            //         command: 'addEditCitation',
-            //         docId: 'askldfjwoiquerowqiaslkdfjlskajeiow'
-            //     });
-            // })();
-            // console.log(req);
-            // break;
-            
-            // const req = new XMLHttpRequest();
-            // req.open("POST", commandUrl, false);
-            // req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-            // req.send({
-            //     command: 'addEditCitation',
-            //     docId: 'sakljdfoiwueroiwqulkasjfdl'
-            // });
-            // console.log(req.responseText);
-
-            // wps.OAAssist.ShellExecute("/usr/bin/touch", "/home/tkw/test.txt");
             break;
         default:
             break

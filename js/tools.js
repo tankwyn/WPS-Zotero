@@ -27,16 +27,31 @@ function makeId(length) {
 }
 
 /**
- * Make a post request (blocked by CORS).
+ * Make a decent post request using XMLHttpRequest.
 **/
-async function postRequestNative(url, payload) {
+function postRequestXHR(url, payload) {
+    console.debug('>>>>> request:', url, payload);
+    const req = new XMLHttpRequest();
+    req.open('POST', url, false);
+    req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+    req.send(JSON.stringify(payload));
+    const ret = { status: req.status, payload: JSON.parse(req.responseText) };
+    console.debug('<<<<< response: ', ret);
+    return ret;
+}
+
+/**
+ * Make a post request using fetch.
+ * Async/await bullshit, too slow.
+**/
+async function postRequestBS(url, payload) {
     console.debug('>>>>> request:', url, payload);
     const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-type': 'application/json; charset=utf-8' },
         body: JSON.stringify(payload)
     });
-    const ret = { status: res.status, payload: res.json() };
+    const ret = { status: res.status, payload: await res.json() };
     console.debug('<<<<< response: ', ret);
     return ret;
 }

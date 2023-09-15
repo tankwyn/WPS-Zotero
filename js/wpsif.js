@@ -25,6 +25,10 @@ const zc_consts = {
     bibStyleDocDataName: '_ZOTERO_BIBSTYLE'
 }
 
+function zc_alert(msg) {
+    alert(`WPS-Zotero: ${msg}`);
+}
+
 /**
  * Get the document object in Application.Documents.
  * Default to current document if the argument is not given.
@@ -909,7 +913,7 @@ var zc_wps = {
      * When there's a visual selection, the cursor is the selection end.
     **/
     getFieldsNearCursor: function(docId) {
-        // NOTE: Return only the the field before the cursor as by design.
+        // NOTE: Return only the the field before the cursor just like other word processor integration plugins.
         const doc = zc_getDocumentById(docId);
         const client = zc_getClientById(docId);
         const range = doc.ActiveWindow.Selection.Range;
