@@ -120,7 +120,7 @@ class ProxyServer:
                 for k,v in PREFLIGHT_HEADERS.items():
                     headers[k] = v
                 data = '\r\n'.join(['HTTP/1.0 200 OK'] + [': '.join(h) for h in headers.items()] + ['', '']).encode('utf8') + body_raw
-                s.send(data)
+                s.sendall(data)
                 logging.info('responded to a preflight request')
                 return
         else:
