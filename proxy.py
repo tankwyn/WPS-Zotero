@@ -32,6 +32,18 @@ def recvall(sock):
     return data
 
 
+def stopproxy():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s.connect(('127.0.0.1', PROXY_PORT))
+        s.send(b'POST /stopproxy HTTP/1.1\r\n\r\n')
+    except:
+        # Swallow all exceptions
+        pass
+    finally:
+        s.close()
+
+
 class ProxyServer:
     input_list = []
     channels = {}
@@ -44,14 +56,20 @@ class ProxyServer:
         self.server.listen()
         self.running = False
 
+    def trystop(self, s):
+        data = recvall(s)
+        if data and data.startswith(b'POST /stopproxy'):
+            logging.info('received stopping command!')
+            self.running = False
+
     def run(self):
         self.input_list.append(self.server)
         self.running = True
         while self.running:
             time.sleep(DELAY)
-            logging.debug('---> begin to select')
+            # logging.debug('---> begin to select')
             rlist, _, _ = select.select(self.input_list, [], [])
-            logging.debug('---> select completed')
+            # logging.debug('---> select completed')
             for s in rlist:
                 if s == self.server:
                     self.on_accept()
@@ -72,14 +90,17 @@ class ProxyServer:
         self.clients.clear()
 
     def on_accept(self):
+        clientsock, clientaddr = self.server.accept()
+        self.trystop(clientsock)
+        logging.info("{} has connected".format(clientaddr))
         forward = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             forward.connect(('127.0.0.1', ZOTERO_PORT))
         except socket.error:
             logging.warning("Cannot connect to Zotero, is the app started?")
+            forward.close()
+            clientsock.close()
             return
-        clientsock, clientaddr = self.server.accept()
-        logging.info("{} has connected".format(clientaddr))
         self.clients.append(clientaddr)
         self.input_list.append(clientsock)
         self.input_list.append(forward)
@@ -87,19 +108,18 @@ class ProxyServer:
         self.channels[forward] = clientsock
 
     def on_close(self, s):
-        logging.info("{} has disconnected".format(s.getpeername()))
-        out = self.channels[s]
         pname = s.getpeername()
         if pname in self.clients:
             self.clients.pop(self.clients.index(pname))
-        # Remove records
+        if s in self.channels:
+            out = self.channels[s]
+            out.close()
+            self.input_list.remove(out)
+            del self.channels[s]
+            del self.channels[out]
         self.input_list.remove(s)
-        self.input_list.remove(out)
-        del self.channels[s]
-        del self.channels[out]
-        # Close sockets
         s.close()
-        out.close()
+        logging.info("{} has disconnected".format(pname))
 
     def on_recv(self, s, data):
         logging.debug('received data: {}'.format(data))
@@ -109,11 +129,6 @@ class ProxyServer:
         request = head[0]
         headers = {t[0]: t[1] for t in map(lambda x: x.split(': ') + [''], head[1:])}
         if s.getpeername() in self.clients:
-            # Stop proxy
-            if data.startswith(b'POST') and ' /stopproxy ' in request:
-                logging.info('received stopping command!')
-                self.running = False
-                return
             # Preflight responses
             logging.info('message received on client {}'.format(s.getpeername()))
             if data.startswith(b'OPTIONS') and 'Origin' in headers and 'Access-Control-Request-Method' in headers:
@@ -162,14 +177,7 @@ def main(argv):
                 logging.error(traceback.format_exc())
     else:
         if (argv[1] == 'kill'):
-            s = None
-            try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.connect(('127.0.0.1', PROXY_PORT))
-                s.send(b'POST /stopproxy HTTP/1.1\r\n\r\n')
-            finally:
-                if s:
-                    s.close()
+            stopproxy()
 
 
 if __name__ == '__main__':
