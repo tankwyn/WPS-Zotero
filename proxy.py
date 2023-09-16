@@ -56,12 +56,6 @@ class ProxyServer:
         self.server.listen()
         self.running = False
 
-    def trystop(self, s):
-        data = recv_all(s)
-        if data and data.startswith(b'POST /stopproxy'):
-            logging.info('received stopping command!')
-            self.running = False
-
     def run(self):
         self.input_list.append(self.server)
         self.running = True
@@ -91,7 +85,8 @@ class ProxyServer:
 
     def on_accept(self):
         clientsock, clientaddr = self.server.accept()
-        self.trystop(clientsock)
+        self.clients.append(clientaddr)
+        self.input_list.append(clientsock)
         logging.info("{} has connected".format(clientaddr))
         forward = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
@@ -99,10 +94,7 @@ class ProxyServer:
         except socket.error:
             logging.warning("Cannot connect to Zotero, is the app started?")
             forward.close()
-            clientsock.close()
             return
-        self.clients.append(clientaddr)
-        self.input_list.append(clientsock)
         self.input_list.append(forward)
         self.channels[clientsock] = forward
         self.channels[forward] = clientsock
@@ -123,6 +115,11 @@ class ProxyServer:
 
     def on_recv(self, s, data):
         logging.debug('received data: {}'.format(data))
+        if data.startswith(b'POST /stopproxy'):
+            logging.info('received stopping command!')
+            self.s.close()
+            self.running = False
+            return
         # Parse HEAD
         head_raw, _, body_raw = data.partition(b"\r\n\r\n")
         head = head_raw.decode('utf8').split("\r\n")
