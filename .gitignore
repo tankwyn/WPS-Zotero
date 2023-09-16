@@ -1,3 +1,4 @@
 node_modules/
 build/
 .debugTemp/
+__pycache__

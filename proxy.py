@@ -22,7 +22,7 @@ PREFLIGHT_HEADERS = {
 }
 
 
-def recvall(sock):
+def recv_all(sock):
     data = b''
     while True:
         part = sock.recv(BUFSIZE)
@@ -32,7 +32,7 @@ def recvall(sock):
     return data
 
 
-def stopproxy():
+def stop_proxy():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         s.connect(('127.0.0.1', PROXY_PORT))
@@ -57,7 +57,7 @@ class ProxyServer:
         self.running = False
 
     def trystop(self, s):
-        data = recvall(s)
+        data = recv_all(s)
         if data and data.startswith(b'POST /stopproxy'):
             logging.info('received stopping command!')
             self.running = False
@@ -75,7 +75,7 @@ class ProxyServer:
                     self.on_accept()
                     break
 
-                data = recvall(s)
+                data = recv_all(s)
                 if len(data) == 0:
                     self.on_close(s)
                     break
@@ -177,7 +177,7 @@ def main(argv):
                 logging.error(traceback.format_exc())
     else:
         if (argv[1] == 'kill'):
-            stopproxy()
+            stop_proxy()
 
 
 if __name__ == '__main__':

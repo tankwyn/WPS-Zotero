@@ -5,7 +5,7 @@ import shutil
 import sys
 import re
 import stat
-from proxy import stopproxy
+from proxy import stop_proxy
 
 
 PKG_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -25,7 +25,7 @@ PROXY_PATH = ADDON_PATH + os.path.sep + 'proxy.py'
 
 def uninstall():
     print("Trying to quit proxy server if it's currently listening...")
-    stopproxy()
+    stop_proxy()
     
     def del_rw(action, name, exc):
         os.chmod(name, stat.S_IWRITE)
