@@ -10,7 +10,7 @@
                     <button id="btnAddNote" label="Add Note" onAction="OnAction" getImage="GetImage" visible="true"/>
                     <button id="btnUnlink" label="Unlink" onAction="OnAction" getImage="GetImage" visible="true"/>
                     <button id="btnExport" label="Export" onAction="OnAction" getImage="GetImage" visible="true"/>
-                    <button id="btnTest" label="Test" onAction="OnAction" getImage="GetImage" visible="false" size="large"/>
+                    <button id="btnAbout" label="About" onAction="OnAction" getImage="GetImage" visible="true" size="large"/>
                 </group>
             </tab>
         </tabs>

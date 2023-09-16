@@ -1,11 +1,16 @@
-// NOTE: Shouldn't be needing this if using the latest version of WPS
+// Shouldn't be needing this if using the latest version of WPS
 const WPS_Enum = {
     msoCTPDockPositionLeft: 0,
     msoCTPDockPositionRight: 2,
     msoPropertyTypeString: 4,
-    wdCollapseStart: 1,
-    wdCollapseEnd: 0,
+    wdAlignParagraphJustify: 3,
+    wdAlignTabLeft: 0,
     wdCharacter: 1,
+    wdCollapseEnd: 0,
+    wdCollapseStart: 1,
+    wdFieldAddin: 81,
+    wdLineBreak: 6,
+    wdParagraph: 4
 };
 
 // Storing global variables
@@ -86,6 +91,8 @@ function OnAction(control) {
             zc_bind().command('addNote');
             zc_clearRegistry();
             break;
+        case "btnAbout":
+            alert(`WPS-Zotero (${VERSION})\n\nThis add-on is licensed under GPL-3.0: <http://www.gnu.org/licenses/>, it comes with no warranty.\n\nAuthor: Tang, Kewei\nhttps://github.com/tankwyn/WPS-Zotero`);
         default:
             break
     }

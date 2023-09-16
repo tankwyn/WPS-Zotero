@@ -954,9 +954,9 @@ var zc_wps = {
             r = confirm('WPS-Zotero: ' + msg) ? 1 : 0;
         } else {
             // TODO: Make a three button dialog.
-            r = confirm('WPS-Zotero: ' + msg + '\n' + "(There are 3 options: 'ok', 'no' and 'cancel', this is page 1, 'no' and 'cancel' can be chosen by selecting 'cancel' to open another dialog)");
+            r = confirm('WPS-Zotero: ' + msg + '\n\n' + "(There are 3 options: 'ok', 'no' and 'cancel', this is page 1/2, 'no' and 'cancel' can be chosen by selecting 'cancel' to open another dialog)");
             if (!r) {
-                r = confirm('WPS-Zotero: ' + msg + '\n' + "(There are 3 options, this is page 2, now 'ok' and 'cancel' represents 'no' and 'cancel')");
+                r = confirm('WPS-Zotero: ' + msg + '\n\n' + "(There are 3 options, this is page 2/2, now 'ok' and 'cancel' represents 'no' and 'cancel')");
                 r = r ? 1 : 0;
             } else {
                 r = 2;

@@ -1,9 +1,0 @@
-{
-	"name": "wps-zotero",
-	"addonType": "wps",
-	"version": "1.0.0",
-	"description": "wps加载项示例, 执行npm install后，提供代码联想功能",
-	"devDependencies": {
-		"wps-jsapi": "latest"
-	}
-}
