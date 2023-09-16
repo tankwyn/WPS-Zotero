@@ -9,7 +9,7 @@ from proxy import stop_proxy
 
 
 PKG_PATH = os.path.dirname(os.path.abspath(__file__))
-with open(PKG_PATH + os.path.sep + 'js/ver.js') as f:
+with open(PKG_PATH + os.path.sep + 'version.js') as f:
     VERSION = f.readlines()[0].split('=')[-1].strip()[1:-1]
 APPNAME = 'wps-zotero_{}'.format(VERSION)
 if os.name == 'posix':

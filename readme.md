@@ -8,7 +8,7 @@ A WPS Writer add-on for integrating with Zotero. **It supports both GNU/Linux an
 
 Install the latest version of WPS and Zotero first. Make sure you have Python3 installed.
 
-Download **the repository**(release packages are older and therefore not recommended), unzip and go into it, and run `./install.py` (`python.exe install.py` on Windows).
+Download **the repository** (release packages are older and therefore not recommended), unzip and go into it, and run `./install.py` (`python.exe install.py` on Windows).
 
 To uninstall, run `./install.py -u` (`python.exe install.py -u` on Windows).
 

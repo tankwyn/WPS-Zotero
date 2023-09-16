@@ -55,10 +55,12 @@ function zc_createClient(documentId, processor) {
         let state = true;
         processor.init(documentId);
 
-        // Make request
-        let req = execCommand(command);
-        assert(req);
+        let flag = false;
         try {
+            // Make request
+            let req = execCommand(command);
+            assert(req);
+            flag = true;
             if (req.status < 300) {
                 // Keep responding until the transaction is completed
                 while (req && req.status < 300) {
@@ -75,8 +77,14 @@ function zc_createClient(documentId, processor) {
         }
         catch (error) {
             state = false;
-            console.error('Error occurred while responding:', error);
-            zc_alert('Internal error occurred while responding to Zotero, you will have to restart Zotero. Please click dev tool, navigate to console and report the problem.');
+            console.error('Error occurred:', error);
+            const guide = flag ? '\nYou will have to restart Zotero.' : '';
+            if (error.name === 'NetworkError') {
+                zc_alert('Network error occurred, is Zotero running?' + guide);
+            }
+            else {
+                zc_alert(`Error occurred ${error.name}, please click dev tool, navigate to console and report the issue.` + guide);
+            }
         }
 
         processor.reset(documentId);
