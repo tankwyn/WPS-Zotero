@@ -45,12 +45,9 @@ function zc_createClient(documentId, processor) {
     }
 
     /**
-     * Send client commands to Zotero and make changes to documents.
+     * Send command to Zotero and make changes to documents.
     **/
     function transact(command) {
-        // TODO: If exception occurred and the command is not fully completed,
-        // the server will be in an unsable state. Is there any way to avoid this?
-
         // Init transaction
         let state = true;
         processor.init(documentId);
@@ -62,7 +59,7 @@ function zc_createClient(documentId, processor) {
             assert(req);
             flag = true;
             if (req.status < 300) {
-                // Keep responding until the transaction is completed
+                // Keep responding until the transaction is fullfilled
                 while (req && req.status < 300) {
                     req = autoRespond(req);
                 }

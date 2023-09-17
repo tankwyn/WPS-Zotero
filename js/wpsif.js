@@ -9,8 +9,6 @@
 // Since Zotero will automatically update the CSL data as it discovers the mismatches.
 // So, the citations created in either MS Word or WPS can be edited/updated in either enivornments without encumberness.
 
-// // This flag contorls MS Word compatibility.
-// const zc_msCompat = false;
 
 const zc_consts = {
     zoteroLink: 'https://www.zotero.org/',
@@ -61,7 +59,7 @@ let zc_registry = {
 /**
  * Clear all entries in the registry.
  * Should be called as soon as possible.
- * It's not safe to keep references of wps objects.
+ * It's not safe to keep references on wps objects.
 **/
 function zc_clearRegistry() {
     zc_registry = {
@@ -264,7 +262,7 @@ function zc_bind(doc) {
         return fId ? client.fields[fId] : null;
     };
     client.getFieldId = function(field) {
-        // NOTE: Compare indexes rather than objects. Direct compare will always fail since the api creates new objects for every call. And hold references on anyone of them will cause problems.
+        // NOTE: Compare indexes rather than objects. Direct compare will always fail since the api creates new objects for every call. Also note that holding references on anyone of them will cause problems.
         if (field) {
             for (const fId in this.fields) {
                 const f = this.fields[fId];
@@ -473,7 +471,8 @@ function zc_insertBibEntries(range, xmlStr, bibStyle) {
                 range.Collapse(wps.Enum.wdCollapseEnd);
             }
         }
-        // NOTE: Only create new paragraph for subsequent entries. (avoid persisting `}`)
+        // NOTE: Only create new paragraphs for subsequent entries.
+        // So the the field is not ended by invisible characters which can cause problems.
         if (i !== entries.length - 1) {
             range.InsertParagraph();
             range.Collapse(wps.Enum.wdCollapseEnd);
@@ -1211,7 +1210,7 @@ var zc_wps = {
     },
 
     reset: function(docId) {
-        // IMPORTANT: Release references on field objects. Should be called as soon as possible when field map is not needed.
+        // IMPORTANT: Release references on field objects. Should be called as soon as possible when the field map is not needed.
         // NOTE: Holding strong references to fields will cause serious problems when fields get deleted. Also, you cannot hold weak references because the field objects returned by the wps api is just dummies and they will be garbage colleted even when the actual fields still exist.
         const doc = zc_getDocumentById(docId);
         const client = zc_getClientById(docId);
