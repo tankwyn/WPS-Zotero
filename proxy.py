@@ -117,7 +117,7 @@ class ProxyServer:
         logging.debug('received data: {}'.format(data))
         if data.startswith(b'POST /stopproxy'):
             logging.info('received stopping command!')
-            self.s.close()
+            s.close()
             self.running = False
             return
         # Parse HEAD
