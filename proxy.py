@@ -61,7 +61,9 @@ class ProxyServer:
         self.running = True
         while self.running:
             time.sleep(DELAY)
+            # logging.debug('---> begin to select')
             rlist, _, _ = select.select(self.input_list, [], [])
+            # logging.debug('---> select completed')
             for s in rlist:
                 if s == self.server:
                     self.on_accept()
@@ -83,6 +85,8 @@ class ProxyServer:
 
     def on_accept(self):
         clientsock, clientaddr = self.server.accept()
+        self.clients.append(clientaddr)
+        self.input_list.append(clientsock)
         logging.info("{} has connected".format(clientaddr))
         forward = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
@@ -90,11 +94,7 @@ class ProxyServer:
         except socket.error:
             logging.warning("Cannot connect to Zotero, is the app started?")
             forward.close()
-            clientsock.close()
-            logging.info("connection to {} has been closed".format(clientaddr))
             return
-        self.clients.append(clientaddr)
-        self.input_list.append(clientsock)
         self.input_list.append(forward)
         self.channels[clientsock] = forward
         self.channels[forward] = clientsock
@@ -115,7 +115,6 @@ class ProxyServer:
 
     def on_recv(self, s, data):
         logging.debug('received data: {}'.format(data))
-        # Stop the proxy server
         if data.startswith(b'POST /stopproxy'):
             logging.info('received stopping command!')
             s.close()
