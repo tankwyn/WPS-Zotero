@@ -15,12 +15,38 @@ const zc_consts = {
     citationHead: 'ITEM CSL_CITATION ',
     citationHeadM: 'ADDIN ZOTERO_ITEM CSL_CITATION ',
     tempCitation: 'TEMP',
+    tempCitationText: '{Updating}',
     bibHead: 'BIBL ',
     bibHeadM: 'ADDIN ZOTERO_BIBL ',
     exportedHead: 'ZOTERO_TRANSFER_DOCUMENT',
     exportedPrefHead: 'DOCUMENT_PREFERENCES ',
     prefDocDataName: 'ZOTERO_PREF',
-    bibStyleDocDataName: '_ZOTERO_BIBSTYLE'
+    bibStyleDocDataName: '_ZOTERO_BIBSTYLE',
+    placeholderUrl: 'https://www.zotero.org/?',
+    colorMap: {
+        // Gray
+        0xaaaaaa: wps.Enum.wdGray50,
+        // Blue
+        0x2ea8e5: wps.Enum.wdBlue,
+        // Magenta
+        0xe56eee: wps.Enum.wdPink,
+        // Violet
+        0xa28ae5: wps.Enum.wdViolet,
+        // Green
+        0x5fb236: wps.Enum.wdGreen,
+        // Orange
+        0xf19837: wps.Enum.wdDarkYellow,
+        // Red
+        0xff6666: wps.Enum.wdRed,
+        // Yellow
+        0xffd400: wps.Enum.wdYellow
+    }
+}
+
+function zc_matchHighlightColor(color) {
+    const colors = Object.keys(zc_consts.colorMap).map((x) => parseInt(x));
+    const matched = matchColor(color, colors);
+    return zc_consts.colorMap[matched];
 }
 
 function zc_alert(msg) {
@@ -293,7 +319,7 @@ function zc_bind(doc) {
      * Only succeed when it's a citation field.
      * Return the newly assigned ID of the field, null if failed.
     **/
-    client.registerField = function (field) {
+    client.registerField = function (field, id) {
         if (field && field.Index > 0) {
             // return the field ID if already registered.
             let fId = this.getFieldId(field);
@@ -302,7 +328,7 @@ function zc_bind(doc) {
             }
             // check if it's a citation field.
             if (zc_isZoteroField(field)) {
-                fId = makeId(10);
+                fId = id ? id : makeId(10);
                 while ((fId in this.fields) == true) {
                     fId = makeId(10);
                 }
@@ -333,7 +359,7 @@ function zc_bind(doc) {
  * Collapse current selection to its end,
  * performa an operation and recover the selection.
 **/
-function zc_withoutSelection(doc, op) {
+function zc_doWithoutSelection(doc, op) {
     const sel = doc.ActiveWindow.Selection;
     let sStart = sel.Start;
     let sEnd = sel.End;
@@ -356,7 +382,7 @@ function zc_withoutSelection(doc, op) {
  * Insert a word text XML node to the given range.
  * Support for formatting tags are limited.
 **/
-function zc_insertXMLNode(range, node) {
+function zc_insertXMLNode(range, node, disableHyperlinks) {
     const common_tags = ['div', 'html', 'body'];
     if (!node || node.nodeType === undefined) {
         console.warn(`${node} is not a node!`);
@@ -364,16 +390,13 @@ function zc_insertXMLNode(range, node) {
     }
     // Insert all texts
     range.InsertAfter(node.textContent);
+    const rStart = range.Start;
+    const rEnd = range.End;
     // Format the texts
     function _format(_range, _node) {
+        let _rStart = _range.Start;
+        let _rEnd = _range.End;
         if (_node.nodeType === zc_etype.ELEMENT_NODE) {
-            let pos = _range.Start;
-            for (const child of _node.childNodes) {
-                const len = child.textContent.length;
-                const subRange = _range.Document.Range(pos, pos + len);
-                _format(subRange, child);
-                pos += len;
-            }
             switch (_node.nodeName) {
                 case 'p':
                     _range.Collapse(wps.Enum.wdCollapseStart);
@@ -389,6 +412,40 @@ function zc_insertXMLNode(range, node) {
                     _range.Collapse(wps.Enum.wdCollapseEnd);
                     _range.Delete(wps.Enum.wdCharacter, 1);
                     break;
+                case 'span':
+                    const style = _node.getAttribute('style');
+                    if (style === 'text-decoration: line-through') {
+                        _range.Font.StrikeThrough = true;
+                    }
+                    else if (style.indexOf('color: ') === 0) {
+                        // NOTE: The name is RGB, but it's actually GBR, so we need to reverse it. the API is a fucking mess.
+                        const color = parseColor(style.substr('color: '.length), true);
+                        assert(color);
+                        _range.Font.TextColor.RGB = color;
+                    }
+                    else if (style.indexOf('background-color') === 0) {
+                        // NOTE: The name is RGB, and it's actually RGB.
+                        const color = parseColor(style.substr('background-color: '), true);
+                        assert(color);
+                        // Match a pre-defined highlight color index
+                        const hl = zc_matchHighlightColor(color)
+                        _range.HighlightColorIndex = hl;
+                        // _range.Font.Fill.Solid();
+                        // _range.Font.Fill.BackColor.RGB = color;
+                    }
+                    else {
+                        log.warn(`Span style: ${style} not supported yet!`);
+                    }
+                    break;
+                case 'h1':
+                    _range.Style = wps.Enum.wdStyleHeading1;
+                    break;
+                case 'h2':
+                    _range.Style = wps.Enum.wdStyleHeading2;
+                    break;
+                case 'h3':
+                    _range.Style = wps.Enum.wdStyleHeading3;
+                    break;
                 case 'sup':
                     _range.Font.Superscript = true;
                     break;
@@ -402,10 +459,10 @@ function zc_insertXMLNode(range, node) {
                     _range.Font.Italic = true;
                     break;
                 case 'a':
-                    // Ignore hyperlinks since it will break fields.
-                    console.debug('ignoring hyperlink formats');
-                    // const addr = _node.getAttribute('href');
-                    // _range.Hyperlinks.Add(_range, addr);
+                    if (!disableHyperlinks) {
+                        const addr = _node.getAttribute('href');
+                        _range.Hyperlinks.Add(_range, addr);
+                    }
                     break;
                 case 'u':
                     _range.Font.Underline = true;
@@ -417,22 +474,43 @@ function zc_insertXMLNode(range, node) {
                     break;
             }
         }
+        _range.Start = _rStart;
+        _range.End = _rEnd;
+        _range.Collapse(wps.Enum.wdCollapseEnd);
+        // Process child nodes in reverse order so the <p> and <br> trick won't change textContent.length
+        const children = _node.childNodes;
+        for (let i = children.length - 1; i >= 0; i--) {
+            const child = children.item(i);
+            _range.MoveStart(wps.Enum.wdCharacter, -child.textContent.length);
+            _rStart = _range.Start;
+            _rEnd = _range.End;
+            _format(_range, child);
+            _range.Start = _rStart;
+            _range.End = _rEnd;
+            _range.Collapse(wps.Enum.wdCollapseStart);
+        }
     }
     _format(range, node);
+    // Selects all inserted texts.
+    range.Start = rStart;
+    range.End = rEnd;
     return node.textContent.length;
 }
 
 /**
  * Insert a xml str as rich text.
 **/
-function zc_insertRichText(range, rich) {
+function zc_insertRichText(range, rich, disableHyperlinks) {
+    // Remove extra line ends
+    let xmlStr = rich.replaceAll('\r', '');
+    xmlStr = xmlStr.replaceAll('\n', '');
     // Turn <br> to <br/>
     // Trick: Add a placeholder character that will later be deleted.
-    let xmlStr = rich.replaceAll('<br>', '<br/>|');
+    xmlStr = xmlStr.replaceAll('<br>', '<br/>|');
     xmlStr = xmlStr.replaceAll('<p>', '<p>|');
     const xml = parseXML(xmlStr);
     if (xml) {
-        return zc_insertXMLNode(range, xml.firstChild) >= 0;
+        return zc_insertXMLNode(range, xml.firstChild, disableHyperlinks) >= 0;
     }
     console.warn(`Failed to parse xml: ${rich}!`);
     return false;
@@ -452,22 +530,23 @@ function zc_insertBibEntries(range, xmlStr, bibStyle) {
         const left = entry.getElementsByClassName('csl-left-margin').item(0);
         const right = entry.getElementsByClassName('csl-right-inline').item(0);
         if (left) {
-            zc_insertXMLNode(range, left);
+            // Enabling hyperlinks in bib will soemhow cause incorrect formatting.
+            zc_insertXMLNode(range, left, true);
             range.Collapse(wps.Enum.wdCollapseEnd);
             range.InsertAfter('\t'.repeat(bibStyle.tabStopsCount));
             range.Collapse(wps.Enum.wdCollapseEnd);
             if (right) {
-                zc_insertXMLNode(range, right);
+                zc_insertXMLNode(range, right, true);
                 range.Collapse(wps.Enum.wdCollapseEnd);
             }
         }
         else {
             if (right) {
-                zc_insertXMLNode(range, right);
+                zc_insertXMLNode(range, right, true);
                 range.Collapse(wps.Enum.wdCollapseEnd);
             }
             else {
-                zc_insertXMLNode(range, entry);
+                zc_insertXMLNode(range, entry, true);
                 range.Collapse(wps.Enum.wdCollapseEnd);
             }
         }
@@ -478,9 +557,10 @@ function zc_insertBibEntries(range, xmlStr, bibStyle) {
             range.Collapse(wps.Enum.wdCollapseEnd);
         }
     }
+    // Whole range
+    range.Start = rStart;
     // Set paragraph style
-    const wholeRange = range.Document.Range(rStart, range.End);
-    const fmt = wholeRange.Paragraphs.Format;
+    const fmt = range.Paragraphs.Format;
     fmt.FirstLineIndent = twip2pt(bibStyle.firstLineIndent);
     fmt.LeftIndent = twip2pt(bibStyle.indent);
     fmt.LineSpacing = twip2pt(bibStyle.lineSpacing);
@@ -489,7 +569,8 @@ function zc_insertBibEntries(range, xmlStr, bibStyle) {
     for (let ts in bibStyle.tabStops) {
         fmt.TabStops.Add(twip2pt(ts), wps.Enum.wdAlignTabLeft);
     }
-    fmt.Alignment = wps.Enum.wdAlignParagraphJustify;
+    // fmt.Alignment = wps.Enum.wdAlignParagraphJustify;
+    return entries.length;
 }
 
 /**
@@ -700,7 +781,7 @@ function zc_createCitationField(range) {
     const field = doc.Fields.Add(range, wps.Enum.wdFieldAddin);
     assert(field);
     field.Code.Text = zc_consts.tempCitation;
-    field.Result.Text = '{Updating}';
+    field.Result.Text = zc_consts.tempCitationText;
     return field;
 }
 
@@ -854,10 +935,10 @@ var zc_wps = {
      * Insert a citation field at cursor and register it.
      * Returns a data object representing the field.
     **/
-    insertField: function(docId, inFootnote) {
+    insertField: function(docId, inFootnote, insertRange) {
         const client = zc_getClientById(docId);
         const doc = zc_getDocumentById(docId);
-        let range = doc.ActiveWindow.Selection.Range;
+        let range = insertRange ? insertRange : doc.ActiveWindow.Selection.Range;
         if (inFootnote) {
             // Create footnote and move into it.
             range.Collapse(wps.Enum.wdCollapseEnd);
@@ -1110,7 +1191,7 @@ var zc_wps = {
             const csl = zc_getCSL(field);
             // fields needs conversion should be citation fields.
             assert(csl);
-            // NOTE: Only support in-text and footnote. So there only 0 or 1.
+            // NOTE: Only support in-text and footnote. So there's only 0 or 1.
             const nowType = csl.properties.noteIndex > 0 ? 1 : 0;
             const conv = nowType - toType;
             if (conv === 1) {
@@ -1144,13 +1225,13 @@ var zc_wps = {
 
         // Turn fields to hyperlinks
         // Fields in main text.
-        for (let i = 1; i <= doc.Fields.Count; i++) {
+        for (let i = doc.Fields.Count; i > 0; i--) {
             zc_convertFieldToHyperlink(doc.Fields.Item(i));
         }
         // Fields in footnotes
-        for (let i = 1; i <= doc.Footnotes.Count; i++) {
+        for (let i = doc.Footnotes.Count; i > 0; i--) {
             const fRange = doc.Footnotes.Item(i).Range;
-            for (let j = 1; j <= fRange.Fields.Count; j++) {
+            for (let j = fRange.Fields.Count; j > 0; j--) {
                 zc_convertFieldToHyperlink(fRange.Fields.Item(j));
             }
         }
@@ -1202,6 +1283,46 @@ var zc_wps = {
                 }
             }
         }
+    },
+
+    convertPlaceholderLinks(docId, placeholderIds, noteType) {
+        const doc = zc_getDocumentById(docId);
+        const client = zc_getClientById(docId);
+        const fieldDataArr = [];
+        const _insertField = this.insertField;
+        function _convert(link) {
+            if (link.Address.indexOf(zc_consts.placeholderUrl) === 0 &&
+                placeholderIds.indexOf(link.Address.substr(zc_consts.placeholderUrl.length)) >= 0) {
+                const phId = link.Address.substr(zc_consts.placeholderUrl.length);
+                link.Range.Select();
+                const sel = link.Range.Document.ActiveWindow.Selection;
+                link.Delete();
+                sel.TypeBackspace();
+                const fieldData = _insertField(docId, noteType, sel.Range);
+                // Re-register the field with placeholder ID
+                const field = client.getField(fieldData.id);
+                client.unregisterField(field);
+                assert(phId === client.registerField(field, phId));
+                fieldData.id = phId;
+                fieldDataArr.push(fieldData);
+            }
+        }
+        for (let i = doc.Hyperlinks.Count; i > 0; i--) {
+            _convert(doc.Hyperlinks.Item(i));
+        }
+        for (let i = doc.Footnotes.Count; i > 0; i--) {
+            const fRange = doc.Footnotes.Item(i).Range;
+            for (let j = fRange.Hyperlinks.Count; j > 0; j--) {
+                _convert(fRange.Hyperlinks.Item(j));
+            }
+        }
+        // for (let i = doc.Endnotes.Count; i > 0; i--) {
+        //     const eRange = doc.Endnotes.Item(i).Range;
+        //     for (let j = eRange.Hyperlinks.Count; j > 0; j--) {
+        //         _convert(eRange.Hyperlinks.Item(j));
+        //     }
+        // }
+        return fieldDataArr;
     },
 
     init: function(docId) {

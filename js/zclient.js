@@ -199,10 +199,15 @@ function zc_createClient(documentId, processor) {
             return respond(null);
         },
 
+        // Convert the placeholders in notes to citation fields.
         convertPlaceholdersToFields: function(args) {
-            // TODO: The meaning of this?
-            zc_alert('convertPlaceholderToFields is not implemented yet!');
-            return respond(null);
+            const docId = args[0];
+            const placeholderIds = args[1];
+            const noteType = args[2];
+            assert(docId === documentId);
+            assert(noteType < 2);
+            const fields = processor.convertPlaceholderLinks(docId, placeholderIds, noteType);
+            return respond(fields);
         },
 
         setBibliographyStyle: function(args) {

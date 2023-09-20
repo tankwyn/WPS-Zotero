@@ -35,7 +35,14 @@ function postRequestXHR(url, payload) {
     req.open('POST', url, false);
     req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
     req.send(JSON.stringify(payload));
-    const ret = { status: req.status, payload: JSON.parse(req.responseText) };
+    let json = undefined;
+    try {
+        json = JSON.parse(req.responseText);
+    }
+    catch (error) {
+        // Swallow any errors
+    }
+    const ret = { status: req.status, payload: json };
     console.debug('<<<<< response: ', ret);
     return ret;
 }
@@ -101,4 +108,56 @@ function parseHTML(htmlStr) {
         const html = parser.parseFromString(htmlStr, 'text/html');
         return html.getElementsByTagName('parsererror').length > 0 ? null : html;
     }
+}
+
+/**
+ * Turn a color string into hex RGB color code.
+ * If reverse, BGR.
+**/
+function parseColor(colorStr, reverse) {
+    let color = null;
+    if (colorStr.indexOf('#') === 0) {
+        colorStr_ = reverse ? '#' + colorStr.substr(5, 2) + colorStr.substr(3, 2) + colorStr.substr(1, 2) : colorStr;
+        color = parseInt(colorStr_.replace('#', '0x'))
+    }
+    else if (colorStr.indexOf('rgb(' === 0)) {
+        tmp = colorStr.match(new RegExp('\\d+,\\s*\\d+,\\s*\\d+'))[0].split(',');
+        assert(tmp.length === 3);
+        if (reverse) {
+            tmp.reverse();
+        }
+        color = parseInt(tmp[2])*256*256 + parseInt(tmp[1])*256 + parseInt(tmp[0]);
+    }
+    return color;
+}
+
+/**
+ * Find a color from a given color set that is most close to a hex RGB color
+**/
+function matchColor(targetColor, colors) {
+    const idx = colors.indexOf(targetColor);
+    if (idx >= 0) {
+        return colors[idx];
+    }
+    const cStr = targetColor.toString(16);
+    const r = parseInt('0x' + cStr.substr(0, 2));
+    const g = parseInt('0x' + cStr.substr(2, 2));
+    const b = parseInt('0x' + cStr.substr(4, 2));
+    function diff(_color) {
+        const _cStr = _color.toString(16);
+        const _r = parseInt('0x' + _cStr.substr(0, 2));
+        const _g = parseInt('0x' + _cStr.substr(2, 2));
+        const _b = parseInt('0x' + _cStr.substr(4, 2));
+        return (r - _r)**2 + (g - _g)**2 + (b - _b)**2;
+    }
+    let d1 = 3 * 1000**2;
+    let res = null;
+    for (let c of colors) {
+        let d = diff(c);
+        if (d < d1) {
+            d1 = d;
+            res = c;
+        }
+    }
+    return res;
 }

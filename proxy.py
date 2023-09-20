@@ -51,6 +51,9 @@ class ProxyServer:
 
     def __init__(self, host, port):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # NOTE: Setting this on Windows will cause multiple instances listening on the same port.
+        if os.name == 'posix':
+            self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1);
         self.server.bind((host, port))
         self.server.listen()
         self.running = False
@@ -60,9 +63,7 @@ class ProxyServer:
         self.running = True
         while self.running:
             time.sleep(DELAY)
-            # logging.debug('---> begin to select')
             rlist, _, _ = select.select(self.input_list, [], [])
-            # logging.debug('---> select completed')
             for s in rlist:
                 if s == self.server:
                     self.on_accept()
@@ -81,6 +82,7 @@ class ProxyServer:
         self.input_list.clear()
         self.channels.clear()
         self.clients.clear()
+        self.server.close()
 
     def on_accept(self):
         clientsock, clientaddr = self.server.accept()
@@ -93,6 +95,7 @@ class ProxyServer:
         except socket.error:
             logging.warning("Cannot connect to Zotero, is the app started?")
             forward.close()
+            # NOTE: Cannot close client sockets here for it will discard quit commands.
             return
         self.input_list.append(forward)
         self.channels[clientsock] = forward
