@@ -121,7 +121,7 @@ function parseHTML(htmlStr) {
 function parseColor(colorStr, reverse) {
     let color = null;
     if (colorStr.indexOf('#') === 0) {
-        colorStr_ = reverse ? '#' + colorStr.substr(5, 2) + colorStr.substr(3, 2) + colorStr.substr(1, 2) : colorStr;
+        const colorStr_ = reverse ? '#' + colorStr.substr(5, 2) + colorStr.substr(3, 2) + colorStr.substr(1, 2) : colorStr;
         color = parseInt(colorStr_.replace('#', '0x'))
     }
     else if (colorStr.indexOf('rgb(' === 0)) {
