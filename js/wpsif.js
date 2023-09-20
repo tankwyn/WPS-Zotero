@@ -399,11 +399,11 @@ function zc_insertXMLNode(range, node, disableHyperlinks) {
         if (_node.nodeType === zc_etype.ELEMENT_NODE) {
             switch (_node.nodeName) {
                 case 'p':
-                    _range.Collapse(wps.Enum.wdCollapseStart);
-                    _range.InsertParagraph();
-                    // Delete the placeholder
-                    _range.Collapse(wps.Enum.wdCollapseEnd);
-                    _range.Delete(wps.Enum.wdCharacter, 1);
+                    // _range.Collapse(wps.Enum.wdCollapseStart);
+                    // _range.InsertParagraph();
+                    // // Delete the placeholder
+                    // _range.Collapse(wps.Enum.wdCollapseEnd);
+                    // _range.Delete(wps.Enum.wdCharacter, 1);
                     break;
                 case 'br':
                     _range.Collapse(wps.Enum.wdCollapseStart);
@@ -446,11 +446,60 @@ function zc_insertXMLNode(range, node, disableHyperlinks) {
                 case 'h3':
                     _range.Style = wps.Enum.wdStyleHeading3;
                     break;
+                case 'ul':
+                    _range.ListFormat.ApplyBulletDefault();
+                    break;
+                case 'ol':
+                    _range.ListFormat.ApplyNumberDefault();
+                    break;
+                case 'li':
+                    break;
+                case 'blockquote':
+                    const fmt = _range.Paragraphs.Format;
+                    // Both APA and MLA use 0.5 cm indent for block quotes.
+                    fmt.LeftIndent = cm2pt(0.5);
+                    break;
+                case 'pre':
+                    // MS Word integration didn't do this either.
+                    if (_node.hasAttributes()) {
+                        if (_node.hasAttribute('class') && _node.getAttribute('class') === 'math') {
+                            // NOTE: Can't do this.
+                            // WPS won't parse things like '^' or '_'.
+                            // To make this work will need a equation parser.
+                            // Do nothing because equation env is different on Windows and the following piece of code will cause error.
+                            break;
+                            
+                            let text = _range.Text;
+                            // Remove guarding $$
+                            text = text.substring(2);
+                            text = text.substr(0, text.length-2);
+                            // Remove equation text
+                            _range.Text = '';
+                            // Create a math environment and move the equation text into it.
+                            const mrange = _range.OMaths.Add(_range);
+                            const om = mrange.OMaths.Item(1);
+                            om.Range.Text = ' ';
+                            om.Range.InsertAfter(text);
+                            om.BuildUp();
+                        }
+                    }
+                    else {
+                        console.warn('monospace is not supported!');
+
+                        // NOTE: Can't do this.
+                        // Because there's no safe monospace fonts on Linux and setting one that doesn't exist will freeze WPS.
+                        // Also, WPS won't accept `monospace` as a valid font name.
+
+                        // no attribute defaults to monospaced
+                        // const font = GLOBAL_MAP.isWin ? 'Courier New' : 'monospace';
+                        // _range.Font.Name = font;
+                    }
+                    break;
                 case 'sup':
                     _range.Font.Superscript = true;
                     break;
                 case 'sub':
-                    _range.Subscript.Italic = true;
+                    _range.Font.Subscript.Italic = true;
                     break;
                 case 'b':
                     _range.Font.Bold = true;
@@ -507,7 +556,22 @@ function zc_insertRichText(range, rich, disableHyperlinks) {
     // Turn <br> to <br/>
     // Trick: Add a placeholder character that will later be deleted.
     xmlStr = xmlStr.replaceAll('<br>', '<br/>|');
-    xmlStr = xmlStr.replaceAll('<p>', '<p>|');
+    // Turn <p> to \n
+    xmlStr = xmlStr.replaceAll('</p>', '\n</p>');
+    // Add \n after li
+    xmlStr = xmlStr.replaceAll('</li>', '</li>\n');
+    // Add \n after pre
+    xmlStr = xmlStr.replaceAll('</pre>', '</pre>\n');
+    // Add \n after h1, h2 and h3
+    xmlStr = xmlStr.replaceAll('</h1>', '</h1>\n');
+    xmlStr = xmlStr.replaceAll('</h2>', '</h2>\n');
+    xmlStr = xmlStr.replaceAll('</h3>', '</h3>\n');
+    // Replace <em> with <i>
+    xmlStr = xmlStr.replaceAll('<em>', '<i>');
+    xmlStr = xmlStr.replaceAll('</em>', '</i>');
+    // Replace <strong> with <b>
+    xmlStr = xmlStr.replaceAll('<strong>', '<b>');
+    xmlStr = xmlStr.replaceAll('</strong>', '</b>');
     const xml = parseXML(xmlStr);
     if (xml) {
         return zc_insertXMLNode(range, xml.firstChild, disableHyperlinks) >= 0;

@@ -88,6 +88,10 @@ function pt2twip(pt) {
     return pt * 20;
 }
 
+function cm2pt(cm) {
+    return cm * 28.3465;
+}
+
 /**
  * Parse a xml string in a safe manner.
 **/

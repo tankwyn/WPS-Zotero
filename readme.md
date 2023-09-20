@@ -14,7 +14,7 @@ To uninstall, run `./install.py -u` (`python.exe install.py -u` on Windows).
 
 (On Windows, you can open a terminal by hitting the start button and type `cmd`, then use `cd` command to go to the unzipped directory, `cd D:\Downloads\WPS-Zotero`, e.g.)
 
-直接下载源码包解压，cd 进去执行 install.py 即可，这个插件需要 Python3，Linux 一般自带了，Windows 需要自己下载安装。Windows下点击开始按键搜索cmd并打开控制台，然后cd到解压的插件目录下面执行安装，如：cd D:\Downloads\WPS-Zotero，具体路径可以从资源管理器地址栏复制。实在不会安装的看[**详细教程**](https://www.cnblogs.com/tkwblog/articles/17705935.html)。
+直接下载源码包解压，然后双击bat安装脚本进行安装或卸载，如果不行可以用另一种方法安装，看[**详细教程**](https://www.cnblogs.com/tkwblog/articles/17705935.html)。
 
 ## How does it work
 
@@ -27,10 +27,6 @@ The add-on will store data to documents in a way similar as MS Word does. The on
 ## Common fixes
 
 If there's something wrong occurred during a transaction, the Zotero server will then be unusable, you will then be advised to restart Zotero. For other cases, restart WPS Writer and Zotero to see if the problem persists. If the problem persists, you can run `python proxy.py kill` in the package directory to quit the proxy server manually before restarting the applications. Re-installation can be tried of course if you still can't fix it.
-
-## Citation formatting
-
-The add-on only supports a limited set of formatting tags (\<p\>, \<br\>, \<b\>, \<i\> ...), which should cover all using cases. However, if you found any formatting problems, please raise an issue, I will add support for it.
 
 ## Known issues
 
