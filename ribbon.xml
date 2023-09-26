@@ -1,16 +1,16 @@
 <customUI xmlns="http://schemas.microsoft.com/office/2006/01/customui" onLoad="OnAddinLoad">
     <ribbon startFromScratch="false">
         <tabs>
-            <tab id="zoteroTab" label="Zotero">
+            <tab id="zoteroTab" label="Zotero" keytip="C">
                 <group id="zoteroGroup" label="Zotero">
-                    <button id="btnAddEditCitation" label="Add/Edit Citation" onAction="OnAction" getImage="GetImage" visible="true" size="large"/>
-                    <button id="btnAddEditBib" label="Add/Edit Refs" onAction="OnAction" getImage="GetImage" visible="true" size="large"/>
-                    <button id="btnRefresh" label="Refresh" onAction="OnAction" getImage="GetImage" visible="true" size="large"/>
-                    <button id="btnPref" label="Preferences" onAction="OnAction" getImage="GetImage" visible="true"/>
-                    <button id="btnAddNote" label="Add Note" onAction="OnAction" getImage="GetImage" visible="true"/>
-                    <button id="btnUnlink" label="Unlink" onAction="OnAction" getImage="GetImage" visible="true"/>
-                    <button id="btnExport" label="Export" onAction="OnAction" getImage="GetImage" visible="true"/>
-                    <button id="btnAbout" label="About" onAction="OnAction" getImage="GetImage" visible="true" size="large"/>
+                    <button id="btnAddEditCitation" label="Add/Edit Citation" onAction="OnAction" getImage="GetImage" visible="true" size="large" supertip="Insert a new citation, or edit the citation at the current cursor position" keytip="C"/>
+                    <button id="btnAddEditBib" label="Add/Edit Refs" onAction="OnAction" getImage="GetImage" visible="true" size="large" supertip="Insert a new bibliography, or edit the existing bibliography, at the current cursor position" keytip="B"/>
+                    <button id="btnRefresh" label="Refresh" onAction="OnAction" getImage="GetImage" visible="true" size="large" supertip="Update all citations to reflect changes" keytip="R"/>
+                    <button id="btnPref" label="Preferences" onAction="OnAction" getImage="GetImage" visible="true" supertip="Change the citation style or locale" keytip="P"/>
+                    <button id="btnAddNote" label="Add Note" onAction="OnAction" getImage="GetImage" visible="true" supertip="Insert a new note at the current cursor position" keytip="N"/>
+                    <button id="btnUnlink" label="Unlink" onAction="OnAction" getImage="GetImage" visible="true" supertip="Remove all Zotero field codes and unlink from Zotero library" keytip="U"/>
+                    <button id="btnExport" label="Export" onAction="OnAction" getImage="GetImage" visible="true" supertip="Export the document to switch to another word processor" keytip="E"/>
+                    <button id="btnAbout" label="About" onAction="OnAction" getImage="GetImage" visible="true" size="large" supertip="About this add-on" keytip="A"/>
                 </group>
             </tab>
         </tabs>
