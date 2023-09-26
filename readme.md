@@ -6,15 +6,15 @@ A WPS Writer add-on for integrating with Zotero. **It supports both GNU/Linux an
 
 ## Installation
 
-Install the latest version of WPS and Zotero first. Make sure you have Python3 installed.
+Install the latest version of WPS and Zotero and make sure you have Python3 installed.
 
-Download **the repository** (release packages are older and therefore not recommended), unzip and go into it, and run `./install.py` (`python.exe install.py` on Windows).
+Download **the repository** (release packages are older and therefore not recommended), unzip and go into it, and run `./install.py` (`python install.py` on Windows).
 
-To uninstall, run `./install.py -u` (`python.exe install.py -u` on Windows).
+To uninstall, run `./install.py -u` (`python install.py -u` on Windows).
 
-(On Windows, you can open a terminal by hitting the start button and type `cmd`, then use `cd` command to go to the unzipped directory, `cd D:\Downloads\WPS-Zotero`, e.g.)
+(On Windows, you can open a terminal by hitting the start button and type `cmd`, then use the `cd` command to go to the unzipped directory, `cd D:\Downloads\WPS-Zotero`, e.g.)
 
-直接下载源码包解压，Linux用户执行install.py安装；Windows用户双击bat安装脚本进行安装或卸载，如果不行可以用另一种方法安装，看[**详细教程**](https://www.cnblogs.com/tkwblog/articles/17705935.html)。
+先保证Python3安装好，Linux一般自带了，然后直接下载源码包解压，Linux用户执行install.py安装；Windows用户双击bat安装脚本进行安装或卸载，如果不行可以用另一种方法安装，看[**详细教程**](https://www.cnblogs.com/tkwblog/articles/17705935.html)。
 
 ## How does it work
 
@@ -32,4 +32,6 @@ If there's something wrong occurred during a transaction, the Zotero server will
 
 - On Windows, the Zotero citation windows might not be focused sometimes and they might be placed in background, you can click the Zotero icon on your task bar to bring it to front. This seems to be [a bug of Zotero](https://github.com/zotero/zotero-libreoffice-integration/issues/41).
 
-- On Windows, the `ApplicationQuit` event of WPS can not be received by the add-on, so the proxy server cannot be shutdown, but this won't affect common usage and only eats a small amount of resources.
+- On Windows, the `ApplicationQuit` event of WPS can not be received by the add-on, so the proxy server cannot be shutdown, but this should not cause any problem except for eating a small amount of resources.
+
+- Shortcuts are currently not possible. But on Windows, one can activate the ribbon by `Alt-C`, then hit subsequent keys to simulate button clicking. For example, `Alt-C Alt-C` (holding `Alt` and press `C` twice) does just the same thing as clicking the 'Add/Edit Citation' button. However, this won't work on Linux for the Linux version of WPS doesn't support this feature.
