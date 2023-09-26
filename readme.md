@@ -30,6 +30,6 @@ If there's something wrong occurred during a transaction, the Zotero server will
 
 ## Known issues
 
-- On Windows, the Zotero citation windows might not be focused sometimes and they might get blocked by the WPS window, you can click the Zotero icon on task bar to bring it to front.
+- On Windows, the Zotero citation windows might not be focused sometimes and they might be placed in background, you can click the Zotero icon on your task bar to bring it to front. This seems to be [a bug of Zotero](https://github.com/zotero/zotero-libreoffice-integration/issues/41).
 
 - On Windows, the `ApplicationQuit` event of WPS can not be received by the add-on, so the proxy server cannot be shutdown, but this won't affect common usage and only eats a small amount of resources.

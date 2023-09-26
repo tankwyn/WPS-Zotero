@@ -23,6 +23,7 @@ XML_PATHS = {
 }
 PROXY_PATH = ADDON_PATH + os.path.sep + 'proxy.py'
 
+
 def uninstall():
     print("Trying to quit proxy server if it's currently listening...")
     stop_proxy()
@@ -49,6 +50,7 @@ def uninstall():
             print('Removing record from {}'.format(fp))
             with open(fp, 'w') as f:
                 f.write(xmlStr[:r[0]] + xmlStr[r[1]:])
+
 
 print('Uninstalling previous installations if there is any ...')
 uninstall()
@@ -81,7 +83,7 @@ if not os.path.exists(XML_PATHS['authwebsite']):
 # Copy to jsaddons
 shutil.copytree(PKG_PATH, ADDON_PATH + os.path.sep + APPNAME)
 
-# Write records to xml files
+# Write records to XML files
 def register(fp, tagname, record):
     with open(fp) as f:
         content = f.read()
@@ -97,6 +99,24 @@ rec = '<jsplugin url="http://127.0.0.1:3889/" type="wps" enable="enable_dev" ins
 register(XML_PATHS['publish'], 'jsplugins', rec)
 rec = '<website origin="null" name="wps-zotero" status="enable"/>'
 register(XML_PATHS['authwebsite'], 'websites', rec)
+
+# Alleviate the "Zotero window not brought to front" problem.
+# https://www.zotero.org/support/kb/addcitationdialog_raised
+if os.name == 'nt':
+    print('Change zotero preference to alleviate the problem of Zotero window not showing in front.')
+    tmp = os.environ['APPDATA'] + '\\Zotero\\Zotero\\Profiles\\'
+    for fn in os.listdir(tmp):
+        if os.path.isdir(fn) and tmp.endswith('.default') and os.path.isfile(fn + '\\prefs.js'):
+            pref_fn = fn + '\\prefs.js'
+            with open(pref_fn) as f:
+                content = f.read()
+            if 'extensions.zotero.integration.keepAddCitationDialogRaised' in content:
+                content = content.replace('user_pref("extensions.zotero.integration.keepAddCitationDialogRaised", false)', 'user_pref("extensions.zotero.integration.keepAddCitationDialogRaised", true);')
+            else:
+                content += '\nuser_pref("extensions.zotero.integration.keepAddCitationDialogRaised", true);\n'
+            with open(pref_fn, 'w') as f:
+                f.write(content)
+
 
 print('All done, enjoy!')
 print('(run ./install.py -u to uninstall)')
