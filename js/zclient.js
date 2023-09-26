@@ -192,7 +192,7 @@ function zc_createClient(documentId, processor) {
             const fieldIds = args[1];
             const toFieldType = args[2];
             const toNoteType = args[3];
-            // NOTE: Count is undefined
+            // Count is undefined
             assert(docId === documentId);
             assert(toFieldType === 'Http');
             processor.convertToNoteType(docId, fieldIds, toNoteType);

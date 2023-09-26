@@ -13,6 +13,10 @@ const WPS_Enum = {
     wdParagraph: 4
 };
 
+function zc_alert(msg) {
+    alert(`WPS-Zotero: ${msg}`);
+}
+
 // Storing global variables
 const GLOBAL_MAP = {};
 
@@ -59,8 +63,8 @@ function OnAction(control) {
     const eleId = control.Id
     switch (eleId) {
         case "btnAddEditCitation":
-            // IMPORTANT: Release references on the document objects!!!
             zc_bind().command('addEditCitation');
+            // IMPORTANT: Release references on the document objects!!!
             zc_clearRegistry();
             break;
         case "btnAddEditBib":

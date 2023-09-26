@@ -49,10 +49,6 @@ function zc_matchHighlightColor(color) {
     return zc_consts.colorMap[matched];
 }
 
-function zc_alert(msg) {
-    alert(`WPS-Zotero: ${msg}`);
-}
-
 /**
  * Get the document object in Application.Documents.
  * Default to current document if the argument is not given.
@@ -288,7 +284,7 @@ function zc_bind(doc) {
         return fId ? client.fields[fId] : null;
     };
     client.getFieldId = function(field) {
-        // NOTE: Compare indexes rather than objects. Direct compare will always fail since the api creates new objects for every call. Also note that holding references on anyone of them will cause problems.
+        // Compare indexes rather than objects. Direct compare will always fail since the api creates new objects for every call. Also note that holding references on anyone of them will cause problems.
         if (field) {
             for (const fId in this.fields) {
                 const f = this.fields[fId];
@@ -396,14 +392,9 @@ function zc_insertXMLNode(range, node, disableHyperlinks) {
     function _format(_range, _node) {
         let _rStart = _range.Start;
         let _rEnd = _range.End;
-        if (_node.nodeType === zc_etype.ELEMENT_NODE) {
+        if (_node.nodeType === domElmType.ELEMENT_NODE) {
             switch (_node.nodeName) {
                 case 'p':
-                    // _range.Collapse(wps.Enum.wdCollapseStart);
-                    // _range.InsertParagraph();
-                    // // Delete the placeholder
-                    // _range.Collapse(wps.Enum.wdCollapseEnd);
-                    // _range.Delete(wps.Enum.wdCharacter, 1);
                     break;
                 case 'br':
                     _range.Collapse(wps.Enum.wdCollapseStart);
@@ -418,13 +409,13 @@ function zc_insertXMLNode(range, node, disableHyperlinks) {
                         _range.Font.StrikeThrough = true;
                     }
                     else if (style.indexOf('color: ') === 0) {
-                        // NOTE: The name is RGB, but it's actually GBR, so we need to reverse it. the API is a fucking mess.
+                        // The name is RGB, but it's actually GBR, so we need to reverse it. the API is a fucking mess.
                         const color = parseColor(style.substr('color: '.length), true);
                         assert(color);
                         _range.Font.TextColor.RGB = color;
                     }
                     else if (style.indexOf('background-color') === 0) {
-                        // NOTE: The name is RGB, and it's actually RGB.
+                        // The name is RGB, and it's actually RGB.
                         const color = parseColor(style.substr('background-color: '), true);
                         assert(color);
                         // Match a pre-defined highlight color index
@@ -463,7 +454,7 @@ function zc_insertXMLNode(range, node, disableHyperlinks) {
                     // MS Word integration didn't do this either.
                     if (_node.hasAttributes()) {
                         if (_node.hasAttribute('class') && _node.getAttribute('class') === 'math') {
-                            // NOTE: Can't do this.
+                            console.debug('equation is not supported!');
                             // WPS won't parse things like '^' or '_'.
                             // To make this work will need a equation parser.
                             // Do nothing because equation env is different on Windows and the following piece of code will cause error.
@@ -484,7 +475,7 @@ function zc_insertXMLNode(range, node, disableHyperlinks) {
                         }
                     }
                     else {
-                        console.warn('monospace is not supported!');
+                        console.debug('monospace is not supported!');
 
                         // NOTE: Can't do this.
                         // Because there's no safe monospace fonts on Linux and setting one that doesn't exist will freeze WPS.
@@ -526,7 +517,7 @@ function zc_insertXMLNode(range, node, disableHyperlinks) {
         _range.Start = _rStart;
         _range.End = _rEnd;
         _range.Collapse(wps.Enum.wdCollapseEnd);
-        // Process child nodes in reverse order so the <p> and <br> trick won't change textContent.length
+        // Process child nodes in reverse order so the <br> trick won't change textContent.length
         const children = _node.childNodes;
         for (let i = children.length - 1; i >= 0; i--) {
             const child = children.item(i);
@@ -614,7 +605,7 @@ function zc_insertBibEntries(range, xmlStr, bibStyle) {
                 range.Collapse(wps.Enum.wdCollapseEnd);
             }
         }
-        // NOTE: Only create new paragraphs for subsequent entries.
+        // Only create new paragraphs for subsequent entries.
         // So the the field is not ended by invisible characters which can cause problems.
         if (i !== entries.length - 1) {
             range.InsertParagraph();
@@ -691,7 +682,7 @@ function zc_isZoteroField(field) {
 /**
  * Move the citation field from footnote to main text.
 **/
-function zc_convertToNormal(field) {
+function zc_moveFieldToMain(field) {
     const doc = zc_getDocumentInDocuments(field.Result.Document);
     const docId = zc_getDocumentId(doc);
     const client = zc_getClientById(docId);
@@ -699,7 +690,7 @@ function zc_convertToNormal(field) {
     assert(fId);
     // Change noteIndex to 0 in code.
     let code = field.Code.Text;
-    let csl = zc_getCSL(field);
+    let csl = zc_getCslData(field);
     csl.properties.noteIndex = 0;
     code = code.substring(0, code.indexOf('{')) + JSON.stringify(csl);
     // Acquire the footnote of which the field resides in.
@@ -721,7 +712,7 @@ function zc_convertToNormal(field) {
 /**
  * Move the citation field from main text to footnote.
 **/
-function zc_convertToFootnote(field) {
+function zc_moveFieldToFootnote(field) {
     const doc = zc_getDocumentInDocuments(field.Result.Document);
     const docId = zc_getDocumentId(doc);
     const client = zc_getClientById(docId);
@@ -729,14 +720,14 @@ function zc_convertToFootnote(field) {
     assert(fId);
     let code = field.Code.Text;
     // Change noteIndex to 1.
-    let csl = zc_getCSL(field);
+    let csl = zc_getCslData(field);
     csl.properties.noteIndex = 1;
     code = code.substring(0, code.indexOf('{')) + JSON.stringify(csl);
     // Create footnote at the range of the old field and move to footnote.
     let range = field.Result;
     range.Collapse(wps.Enum.wdCollapseStart);
     // Delete old field
-    // IMPORTANT: Must do this before creating footnote or the footnote field will merge with the old field and gets deleted all together.
+    // Must do this before creating footnote or the footnote field will merge with the old field and gets deleted all together.
     field.Delete()
     const footnote = doc.Footnotes.Add(range);
     range = footnote.Range;
@@ -797,7 +788,7 @@ function zc_convertHyperlinkToField(hyperlink) {
 /**
  * Get CSL json from field code.
 **/
-function zc_getCSL(field) {
+function zc_getCslData(field) {
     let data = null;
     const code =field.Code.Text;
     const idx0 = code.indexOf(zc_consts.citationHead);
@@ -873,7 +864,7 @@ function zc_isFieldAdjacent(field) {
     return false;
 }
 
-function zc_fieldInFootnote(field) {
+function zc_isFieldInFootnote(field) {
     if (field) {
         return field.Result.Footnotes.Count > 0;
     }
@@ -903,11 +894,12 @@ function zc_getZoteroFieldData(field, noTweak) {
         let adjacent = zc_isFieldAdjacent(field);
 
         // Get noteIndex from CSL data.
-        const defaultNoteIndex = zc_fieldInFootnote(field) ? 1 : 0;
-        const csl = zc_getCSL(field);
+        const defaultNoteIndex = zc_isFieldInFootnote(field) ? 1 : 0;
+        const csl = zc_getCslData(field);
         const noteIndex = csl ? csl.properties.noteIndex : defaultNoteIndex;
 
-        // NOTE: The official documentation says the server would expect an array. However, this is not the case in Google Docs's http response.
+        // The documentation says to return an array.
+        // However, Google Docs returns a map just like this:
         const data = {
             id: fId,
             text: text,
@@ -951,8 +943,8 @@ function zc_replaceFieldRichText(field, text, bibStyle) {
     // Move behind the guard.
     let range = field.Result;
     range.Collapse(wps.Enum.wdCollapseStart);
-    // NOTE: Range objects have all the methods of Selection.
     // This is neccessary if there's a paragraph character at start. 
+    // NOTE: Range objects have all the methods of Selection.
     range.MoveStartUntil('!');
     range.MoveStart(wps.Enum.wdCharacter, 1);
     // Insert text with formatting
@@ -1252,17 +1244,17 @@ var zc_wps = {
             assert(toType < 2);
             const field = client.getField(fId);
             assert(field);
-            const csl = zc_getCSL(field);
+            const csl = zc_getCslData(field);
             // fields needs conversion should be citation fields.
             assert(csl);
             // NOTE: Only support in-text and footnote. So there's only 0 or 1.
             const nowType = csl.properties.noteIndex > 0 ? 1 : 0;
             const conv = nowType - toType;
             if (conv === 1) {
-                zc_convertToNormal(field);
+                zc_moveFieldToMain(field);
             }
             else if (conv === -1) {
-                zc_convertToFootnote(field);
+                zc_moveFieldToFootnote(field);
             }
         }
     },
