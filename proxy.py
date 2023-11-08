@@ -92,8 +92,9 @@ class ProxyServer:
         forward = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             forward.connect(('127.0.0.1', ZOTERO_PORT))
-        except socket.error:
+        except socket.error as e:
             logging.warning("Cannot connect to Zotero, is the app started?")
+            logging.debug("Failed to connect to Zotero: {}".format(e))
             forward.close()
             # NOTE: Cannot close client sockets here for it will discard quit commands.
             return
