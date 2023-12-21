@@ -6,7 +6,7 @@ A WPS Writer add-on for integrating with Zotero. **It supports both GNU/Linux an
 
 ## Installation
 
-Install the latest version of WPS and Zotero and make sure you have Python3 installed.
+Install the latest version of WPS and Zotero and make sure you have Python3 installed (**Be sure to check the checkbox for adding Python to the %PATH% environment variable when installing Python**).
 
 Download **the repository** (release packages are older and therefore not recommended), unzip and go into it, and run `./install.py` (`python install.py` on Windows).
 
@@ -14,7 +14,7 @@ To uninstall, run `./install.py -u` (`python install.py -u` on Windows).
 
 (On Windows, you can open a terminal by hitting the start button and type `cmd`, then use the `cd` command to go to the unzipped directory, `cd D:\Downloads\WPS-Zotero`, e.g.)
 
-先保证Python3安装好，Linux一般自带了，然后直接下载源码包解压，Linux用户执行install.py安装；Windows用户双击bat安装脚本进行安装或卸载，如果不行可以用另一种方法安装，看[**详细教程**](https://www.cnblogs.com/tkwblog/articles/17705935.html)。
+先保证Python3安装好（**Windows上安装Python注意勾选添加到环境变量的选项**），Linux一般自带了，然后直接下载源码包解压，Linux用户执行install.py安装；Windows用户双击bat安装脚本进行安装或卸载，如果不行可以用另一种方法安装，看[**详细教程**](https://www.cnblogs.com/tkwblog/articles/17705935.html)。
 
 ## How does it work
 
