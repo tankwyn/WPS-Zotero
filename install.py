@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import platform
 import shutil
 import sys
 import re
@@ -8,6 +9,13 @@ import stat
 from proxy import stop_proxy
 
 
+# Prevent running as root on Linux
+if platform.system() == 'Linux' and os.environ['USER'] == 'root':
+    print("This addon cannot be installed as root!", file=sys.stderr)
+    sys.exit(1)
+
+
+# Path variables
 PKG_PATH = os.path.dirname(os.path.abspath(__file__))
 with open(PKG_PATH + os.path.sep + 'version.js') as f:
     VERSION = f.readlines()[0].split('=')[-1].strip()[1:-1]
@@ -52,12 +60,17 @@ def uninstall():
                 f.write(xmlStr[:r[0]] + xmlStr[r[1]:])
 
 
+
+# Uninstall existing installation
 print('Uninstalling previous installations if there is any ...')
 uninstall()
 if len(sys.argv) > 1 and sys.argv[1] == '-u':
     sys.exit()
 
+
+# Begin installation
 print('Installing')
+
 
 # Create necessary directory and files
 if not os.path.exists(ADDON_PATH):
@@ -80,8 +93,10 @@ if not os.path.exists(XML_PATHS['authwebsite']):
 </websites>
 ''')
 
+
 # Copy to jsaddons
 shutil.copytree(PKG_PATH, ADDON_PATH + os.path.sep + APPNAME)
+
 
 # Write records to XML files
 def register(fp, tagname, record):
@@ -99,6 +114,7 @@ rec = '<jsplugin url="http://127.0.0.1:3889/" type="wps" enable="enable_dev" ins
 register(XML_PATHS['publish'], 'jsplugins', rec)
 rec = '<website origin="null" name="wps-zotero" status="enable"/>'
 register(XML_PATHS['authwebsite'], 'websites', rec)
+
 
 # Alleviate the "Zotero window not brought to front" problem.
 # https://www.zotero.org/support/kb/addcitationdialog_raised
