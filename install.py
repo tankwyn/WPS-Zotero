@@ -6,6 +6,7 @@ import shutil
 import sys
 import re
 import stat
+import subprocess 
 from proxy import stop_proxy
 
 
@@ -15,7 +16,34 @@ if platform.system() == 'Linux' and os.environ['USER'] == 'root':
     sys.exit(1)
 
 
-# Path variables
+# Check whether python is in PATH
+def checkpy():
+    def runcmd(cmd):
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        code = p.wait()
+        res = [line.decode() for line in p.stdout.readlines()]
+        return code, res
+
+    if platform.system() == 'Windows':
+        cmd = 'where python'
+    else:
+        cmd = 'which python'
+    _, pyexes = runcmd(cmd)
+    ver = None
+    if len(pyexes) > 0:
+        _, res = runcmd('{} --version'.format(pyexes[0].strip()))
+        if len(res) > 0 and res[0].startswith('Python'):
+            ver = res[0]
+    if ver is None:
+        print('Please add python to the PATH environment variable!')
+    else:
+        print('Python in PATH:', ver)
+    return ver
+        
+checkpy()
+
+
+# File & directory paths
 PKG_PATH = os.path.dirname(os.path.abspath(__file__))
 with open(PKG_PATH + os.path.sep + 'version.js') as f:
     VERSION = f.readlines()[0].split('=')[-1].strip()[1:-1]
@@ -58,7 +86,6 @@ def uninstall():
             print('Removing record from {}'.format(fp))
             with open(fp, 'w') as f:
                 f.write(xmlStr[:r[0]] + xmlStr[r[1]:])
-
 
 
 # Uninstall existing installation
