@@ -16,7 +16,7 @@ if platform.system() == 'Linux' and os.environ['USER'] == 'root':
     sys.exit(1)
 
 
-# Check whether python is in PATH
+# Check whether Python 3 is in PATH
 def checkpy():
     def runcmd(cmd):
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
@@ -32,10 +32,10 @@ def checkpy():
     ver = None
     if len(pyexes) > 0:
         _, res = runcmd('{} --version'.format(pyexes[0].strip()))
-        if len(res) > 0 and res[0].startswith('Python'):
+        if len(res) > 0 and res[0].startswith('Python 3'):
             ver = res[0]
     if ver is None:
-        print('Please add python to the PATH environment variable!')
+        print('Please add Python 3 to the PATH environment variable!')
     else:
         print('Python in PATH:', ver)
     return ver
