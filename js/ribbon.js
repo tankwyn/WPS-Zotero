@@ -41,6 +41,7 @@ function OnAddinLoad(ribbonUI) {
 
     // Start http proxy server
     if (GLOBAL_MAP.isWin) {
+        // NOTE: Won't work on Windows with the latest version of WPS.
         wps.OAAssist.ShellExecute('pythonw.exe', GLOBAL_MAP.proxyPath);
     }
     else {
@@ -49,7 +50,6 @@ function OnAddinLoad(ribbonUI) {
     
     // Exit the proxy server when the application quits.
     Application.ApiEvent.AddApiEventListener("ApplicationQuit", () => {
-        // NOTE: This event is never received on Windows, so the proxy server can't be stopped and there's nothing I can do.
         postRequestXHR('http://127.0.0.1:21931/stopproxy', null);
     });
     

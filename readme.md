@@ -2,7 +2,7 @@
 
 A WPS Writer add-on for integrating with Zotero. **It supports both GNU/Linux and Windows now**. WPS is an office suite with excellent compatibility to MS Word. For scientific workers to migrate from Windows to GNU/Linux, lacking a good Word processor with citation management support has always been a great obstacle. With this add-on, you can add/edit citations in documents created with MS Word or send your documents created with WPS Writer to others to edit in MS Word. It should provide a seamless experience for people who work in an environment where everyone else use Windows and MS Word. If you encountered any problem, please open an issue, I will fix it ASAP.
 
-这个插件可以让你在Linux下写论文，再发给别人在Windows/MS Word下改，两边插入的引用可以共通（需要选择将引用存储为域）。**现在也支持Windows了哦**。喜欢的朋友点个星星，帮忙散播一下消息，帮助更多科研狗逃脱Windows/MS Office！
+这个插件可以让你在Linux下写论文，再发给别人在Windows/MS Word下改，两边插入的引用可以共通（需要选择将引用存储为域）。**现在也支持Windows了哦**（Windows下有一些问题，翻到最后查看）。喜欢的朋友点个星星，帮忙散播一下消息，帮助更多科研狗逃脱Windows/MS Office！
 
 ## Installation
 
@@ -32,6 +32,6 @@ If there's something wrong occurred during a transaction, the Zotero server will
 
 - On Windows, the Zotero citation windows might not be focused sometimes and they might be placed in background, you can click the Zotero icon on your task bar to bring it to front. This seems to be [a bug of Zotero](https://github.com/zotero/zotero-libreoffice-integration/issues/41).
 
-- On Windows, the `ApplicationQuit` event of WPS can not be received by the add-on, so the proxy server cannot be shutdown, but this should not cause any problem except for eating a small amount of resources.
+- On Windows, the WPS JSAPI (which this addon relies on) is quite unreliable. A known problem with the latest version of WPS is that the `wps.OAAssist.ShellExecute` function can no longer starts local programs which leads to #16. As a temporary solution one can start proxy.py manually with a double click.
 
 - Shortcuts are currently not possible. But on Windows, one can activate the ribbon by `Alt-C`, then hit subsequent keys to simulate button clicking. For example, `Alt-C Alt-C` (holding `Alt` and press `C` twice) does just the same thing as clicking the 'Add/Edit Citation' button. However, this won't work on Linux for the Linux version of WPS doesn't support this feature.

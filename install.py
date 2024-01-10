@@ -40,7 +40,8 @@ def checkpy():
         print('Python in PATH:', ver)
     return ver
         
-checkpy()
+if platform.system() == 'Windows':
+    checkpy()
 
 
 # File & directory paths
