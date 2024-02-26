@@ -156,7 +156,6 @@ def main(argv):
         logfile = os.environ['HOME'] + '/.wps-zotero-proxy.log'
     else:
         logfile = os.environ['APPDATA'] + '\\kingsoft\\wps\\jsaddons\\wps-zotero-proxy.log'
-    logfile = 'd:\\fuck.log'
     if os.path.exists(logfile) and os.path.getsize(logfile) > 100 * 1024:
         os.remove(logfile)
     logging.basicConfig(filename=logfile,
