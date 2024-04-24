@@ -41,7 +41,6 @@ function OnAddinLoad(ribbonUI) {
 
     // Start http proxy server
     if (GLOBAL_MAP.isWin) {
-        // NOTE: Won't work on Windows with the latest version of WPS.
         wps.OAAssist.ShellExecute('pythonw.exe', GLOBAL_MAP.proxyPath);
     }
     else {
@@ -53,7 +52,7 @@ function OnAddinLoad(ribbonUI) {
         postRequestXHR('http://127.0.0.1:21931/stopproxy', null);
     });
     
-    return true
+    return true;
 }
 
 /**
@@ -98,9 +97,9 @@ function OnAction(control) {
         case "btnAbout":
             alert(`WPS-Zotero (${VERSION})\n\nThis add-on is licensed under GPL-3.0: <http://www.gnu.org/licenses/>, it comes with no warranty.\n\nAuthor: Tang, Kewei\nhttps://github.com/tankwyn/WPS-Zotero`);
         default:
-            break
+            break;
     }
-    return true
+    return true;
 }
 
 function GetImage(control) {
