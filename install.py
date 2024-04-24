@@ -131,7 +131,9 @@ def register(fp, tagname, record):
     with open(fp) as f:
         content = f.read()
     pos = [m.end() for m in re.finditer(r'<' + tagname + r'>\s*', content)]
-    assert(len(pos) > 0)
+    if len(pos) == 0:
+        content += f'<{tagname}></{tagname}>'
+        pos = [content.index(f'</{tagname}>')]
     i = pos[0]
     with open(fp, 'w') as f:
         f.write(content[:i] + record + os.linesep + content[i:])
