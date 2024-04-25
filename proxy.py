@@ -10,6 +10,7 @@ import atexit
 import traceback
 import errno
 
+
 ZOTERO_PORT = 23119
 PROXY_PORT = 21931
 BUFSIZE = 4096
@@ -22,13 +23,54 @@ PREFLIGHT_HEADERS = {
 }
 
 
+def parse_head(hd_raw):
+    head = hd_raw.decode('utf8').split("\r\n")
+    request = head[0]
+    headers = {t[0]: t[1] for t in map(lambda x: x.split(': ') + [''], head[1:])}
+    return request, headers
+
+
 def recv_all(sock):
     data = b''
+    closed = False
+
+    # Read in Http head
     while True:
         part = sock.recv(BUFSIZE)
-        data += part
-        if len(part) < BUFSIZE:
+        if not part:
+            closed = True
             break
+        data += part
+        if b'\r\n\r\n' in data:
+            break
+
+    if not data:
+        return data
+
+    hd_raw = data.partition(b'\r\n\r\n')[0]
+    req, headers = parse_head(hd_raw)
+
+    # Read full body
+    if 'Content-Length' in headers:
+        length = len(hd_raw) + 4 + int(headers['Content-Length'])
+        while len(data) < length:
+            data += sock.recv(BUFSIZE)
+    elif not closed:
+        if req.startswith('TRACE'):
+            # TRACE method must not include a body
+            pass
+        elif data.startswith(b'OPTIONS') and 'Origin' in headers and 'Access-Control-Request-Method' in headers:
+            # Preflight requests don't have a body
+            pass
+        else:
+            # Continue to read till the connection is closed
+            while True:
+                part = sock.recv(BUFSIZE)
+                if not part:
+                    closed = True
+                    break
+                data += part
+
     return data
 
 
@@ -128,9 +170,7 @@ class ProxyServer:
             return
         # Parse HEAD
         head_raw, _, body_raw = data.partition(b"\r\n\r\n")
-        head = head_raw.decode('utf8').split("\r\n")
-        request = head[0]
-        headers = {t[0]: t[1] for t in map(lambda x: x.split(': ') + [''], head[1:])}
+        request, headers = parse_head(head_raw)
         if s.getpeername() in self.clients:
             # Preflight responses
             logging.info('message received on client {}'.format(s.getpeername()))
